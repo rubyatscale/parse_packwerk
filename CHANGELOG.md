@@ -1,1 +1,1 @@
-See https://github.com/bigrails/parse_packwerk/releases
+See https://github.com/rubyatscale/parse_packwerk/releases

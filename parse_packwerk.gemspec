@@ -1,17 +1,17 @@
 Gem::Specification.new do |spec|
   spec.name          = "parse_packwerk"
-  spec.version       = '0.10.0'
+  spec.version       = '0.10.1'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A low-dependency gem for parsing and writing packwerk YML files'
   spec.description   = 'A low-dependency gem for parsing and writing packwerk YML files'
-  spec.homepage      = 'https://github.com/bigrails/parse_packwerk'
+  spec.homepage      = 'https://github.com/rubyatscale/parse_packwerk'
   spec.license       = 'MIT'
 
   if spec.respond_to?(:metadata)
     spec.metadata['homepage_uri'] = spec.homepage
-    spec.metadata['source_code_uri'] = 'https://github.com/bigrails/parse_packwerk'
-    spec.metadata['changelog_uri'] = 'https://github.com/bigrails/parse_packwerk/releases'
+    spec.metadata['source_code_uri'] = 'https://github.com/rubyatscale/parse_packwerk'
+    spec.metadata['changelog_uri'] = 'https://github.com/rubyatscale/parse_packwerk/releases'
     spec.metadata['allowed_push_host'] = 'https://rubygems.org'
   else
     raise 'RubyGems 2.0 or newer is required to protect against ' \
