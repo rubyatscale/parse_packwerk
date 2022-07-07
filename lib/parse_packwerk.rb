@@ -39,6 +39,14 @@ module ParsePackwerk
     Configuration.fetch
   end
 
+  sig { params(file_path: T.any(Pathname, String)).returns(T.nilable(Package)) }
+  def self.package_from_path(file_path)
+    path_string = file_path.to_s
+    @package_from_path = T.let(@package_from_path, T.nilable(T::Hash[String, Package]))
+    @package_from_path ||= {}
+    @package_from_path[path_string] ||= all.find { |package| path_string.start_with? package.name }
+  end
+
   sig { params(package: ParsePackwerk::Package).void }
   def self.write_package_yml!(package)
     FileUtils.mkdir_p(package.directory)

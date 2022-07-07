@@ -593,6 +593,49 @@ RSpec.describe ParsePackwerk do
     end
   end
 
+  describe 'ParsePackwerk.package_from_path' do
+    before do
+      write_file('packs/package_1/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          enforce_privacy: true
+      CONTENTS
+    end
+
+    context 'given a filepath in the pack' do
+      let(:filepath) { 'packs/package_1/path/to/file.rb' }
+
+      let(:expected_package) do
+        ParsePackwerk::Package.new(
+          name: 'packs/package_1',
+          enforce_dependencies: true,
+          enforce_privacy: true,
+          dependencies: [],
+          metadata: {},
+        )
+      end
+
+      it 'returns the correct package' do
+        package = ParsePackwerk.package_from_path(filepath)
+
+        expect(package).to have_attributes({
+          name: expected_package.name,
+          enforce_dependencies: expected_package.enforce_dependencies,
+          enforce_privacy: expected_package.enforce_privacy,
+        })
+      end
+    end
+
+    context 'given an bad filepath' do
+      let(:filepath) { 'something/random' }
+
+      it 'returns nil' do
+        package = ParsePackwerk.package_from_path(filepath)
+
+        expect(package).to be_nil
+      end
+    end
+  end
+
   describe 'ParsePackwerk.write_package_yml' do
     let(:package_dir) { Pathname.new('packs/example_pack') }
     let(:package_yml) { package_dir.join('package.yml') }
