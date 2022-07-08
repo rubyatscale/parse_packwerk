@@ -46,10 +46,10 @@ module ParsePackwerk
     path_string = file_path.to_s
     @package_from_path = T.let(@package_from_path, T.nilable(T::Hash[String, Package]))
     @package_from_path ||= {}
-    @package_from_path[path_string] ||= begin
+    @package_from_path[path_string] ||= T.must(begin
       matching_package = all.find { |package| path_string.start_with?("#{package.name}/") || path_string == package.name }
       matching_package || find(ROOT_PACKAGE_NAME)
-    end
+    end)
   end
 
   sig { params(package: ParsePackwerk::Package).void }
