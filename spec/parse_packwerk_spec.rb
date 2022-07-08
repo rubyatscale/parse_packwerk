@@ -593,6 +593,111 @@ RSpec.describe ParsePackwerk do
     end
   end
 
+  describe 'ParsePackwerk.package_from_path' do
+    before do
+      write_file('packs/package_1/package.yml', <<~CONTENTS)
+        enforce_dependencies: true
+        enforce_privacy: true
+      CONTENTS
+
+      write_file('packs/package_1_new/package.yml', <<~CONTENTS)
+        enforce_dependencies: true
+        enforce_privacy: false
+      CONTENTS
+
+      write_file('package.yml', <<~CONTENTS)
+        enforce_dependencies: false
+        enforce_privacy: false
+      CONTENTS
+    end
+
+    let(:expected_package_1) do
+      ParsePackwerk::Package.new(
+        name: 'packs/package_1',
+        enforce_dependencies: true,
+        enforce_privacy: true,
+        dependencies: [],
+        metadata: {},
+        )
+    end
+
+    let(:expected_package_1_new) do
+      ParsePackwerk::Package.new(
+        name: 'packs/package_1_new',
+        enforce_dependencies: true,
+        enforce_privacy: false,
+        dependencies: [],
+        metadata: {},
+        )
+    end
+
+    context 'given a filepath in pack_1' do
+      let(:filepath) { 'packs/package_1/path/to/file.rb' }
+
+      it 'returns the correct package' do
+        package = ParsePackwerk.package_from_path(filepath)
+
+        expect(package).to have_attributes({
+          name: expected_package_1.name,
+          enforce_dependencies: expected_package_1.enforce_dependencies,
+          enforce_privacy: expected_package_1.enforce_privacy,
+        })
+      end
+    end
+
+    context 'given a file path in pack_1_new' do
+      let(:filepath) { 'packs/package_1_new/path/to/file.rb' }
+
+      it 'returns the correct package' do
+        package = ParsePackwerk.package_from_path(filepath)
+
+        expect(package).to have_attributes({
+          name: expected_package_1_new.name,
+          enforce_dependencies: expected_package_1_new.enforce_dependencies,
+          enforce_privacy: expected_package_1_new.enforce_privacy,
+        })
+      end
+    end
+
+    context 'given a file path that is exactly the root of a pack' do
+      let(:filepath) { 'packs/package_1' }
+
+      it 'returns the correct pack' do
+        package = ParsePackwerk.package_from_path(filepath)
+
+        expect(package).to have_attributes({
+          name: expected_package_1.name,
+          enforce_dependencies: expected_package_1.enforce_dependencies,
+          enforce_privacy: expected_package_1.enforce_privacy,
+        })
+      end
+    end
+
+    context 'given a file path not in a pack' do
+      let(:filepath) { 'path/to/file.rb' }
+
+      let(:expected_root_package) do
+        ParsePackwerk::Package.new(
+          name: '.',
+          enforce_dependencies: false,
+          enforce_privacy: false,
+          dependencies: [],
+          metadata: {},
+          )
+      end
+
+      it 'returns the root pack' do
+        package = ParsePackwerk.package_from_path(filepath)
+
+        expect(package).to have_attributes({
+          name: expected_root_package.name,
+          enforce_dependencies: expected_root_package.enforce_dependencies,
+          enforce_privacy: expected_root_package.enforce_privacy,
+        })
+      end
+    end
+  end
+
   describe 'ParsePackwerk.write_package_yml' do
     let(:package_dir) { Pathname.new('packs/example_pack') }
     let(:package_yml) { package_dir.join('package.yml') }
