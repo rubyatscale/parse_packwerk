@@ -20,6 +20,8 @@ module ParsePackwerk
     end
   end
 
+  ROOT_PACKAGE_NAME = "."
+
   extend T::Sig
 
   sig do
@@ -44,7 +46,10 @@ module ParsePackwerk
     path_string = file_path.to_s
     @package_from_path = T.let(@package_from_path, T.nilable(T::Hash[String, Package]))
     @package_from_path ||= {}
-    @package_from_path[path_string] ||= all.find { |package| path_string.start_with? package.name }
+    @package_from_path[path_string] ||= begin
+      matching_package = all.find { |package| path_string.start_with?("#{package.name}/") || path_string == package.name }
+      matching_package || find(ROOT_PACKAGE_NAME)
+    end
   end
 
   sig { params(package: ParsePackwerk::Package).void }
