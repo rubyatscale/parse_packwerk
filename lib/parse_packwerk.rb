@@ -20,8 +20,6 @@ module ParsePackwerk
     end
   end
 
-  ROOT_PACKAGE_NAME = "."
-
   extend T::Sig
 
   sig do
