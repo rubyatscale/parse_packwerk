@@ -18,5 +18,15 @@ module ParsePackwerk
     def privacy?
       type == 'privacy'
     end
+
+    sig { returns(T::Hash[Symbol, T.untyped]) }
+    def to_h
+      {
+        type: type,
+        package_name: to_package_name,
+        class_name: class_name,
+        files: files
+      }
+    end
   end
 end

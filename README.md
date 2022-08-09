@@ -2,13 +2,17 @@
 This gem is meant to give a way to parse the various YML files that come with [`packwerk`](https://github.com/Shopify/packwerk).
 
 # Usage
+
 ```ruby
 # Get all packages
 # Note that currently, this does not respect configuration in `packwerk.yml`
 packages = ParsePackwerk.all
 
-# Get a single package with a given ame
+# Get a single package with a given name
 package = ParsePackwerk.find('packs/my_pack')
+
+# Get the violations from a package
+package.violations
 
 # Get a structured `deprecated_references.yml` object a single package
 deprecated_references = ParsePackwerk::DeprecatedReferences.for(package)

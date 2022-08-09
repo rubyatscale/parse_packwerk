@@ -46,5 +46,13 @@ module ParsePackwerk
         )
       end
     end
+
+    sig { returns(T::Hash[Symbol, T.untyped]) }
+    def to_h
+      {
+        pathname: pathname,
+        violations: violations.map(&:to_h)
+      }
+    end
   end
 end
