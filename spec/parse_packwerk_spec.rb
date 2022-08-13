@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe ParsePackwerk do
+  before do
+    ParsePackwerk.bust_cache!
+  end
+
   def hashify_violations(violations)
     violations.map { |v| hashify_violation(v) }
   end

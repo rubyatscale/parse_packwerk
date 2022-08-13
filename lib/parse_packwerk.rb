@@ -26,7 +26,7 @@ module ParsePackwerk
     returns(T::Array[Package])
   end
   def self.all
-    PackageSet.from(package_pathspec: yml.package_paths, exclude_pathspec: yml.exclude)
+    packages_by_name.values
   end
 
   sig { params(name: String).returns(T.nilable(Package)) }
@@ -93,8 +93,18 @@ module ParsePackwerk
   def self.packages_by_name
     @packages_by_name = T.let(@packages_by_name, T.nilable(T::Hash[String, Package]))
     @packages_by_name ||= begin
-      all.map{|p| [p.name, p]}.to_h
+      all_packages = PackageSet.from(package_pathspec: yml.package_paths, exclude_pathspec: yml.exclude)
+      # We want to match more specific paths first
+      # Packwerk does this too and is necessary for package_from_path to work correctly.
+      sorted_packages = all_packages.sort_by { |package| -package.name.length }
+      sorted_packages.map{|p| [p.name, p]}.to_h
     end
+  end
+
+  sig { void }
+  def self.bust_cache!
+    @packages_by_name = nil
+    @package_from_path = nil
   end
 
   private_class_method :packages_by_name
