@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe ParsePackwerk do
+  before do
+    ParsePackwerk.bust_cache!
+  end
+
   def hashify_violations(violations)
     violations.map { |v| hashify_violation(v) }
   end
@@ -511,6 +515,32 @@ RSpec.describe ParsePackwerk do
         expect(all_packages.find{|p| p.name == 'packs/my_pack'}).to_not be_nil
       end
     end
+
+    context 'in an app with nested packs' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+
+        write_file('packs/my_pack/package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+
+        write_file('packs/my_pack/subpack/package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+      end
+
+      it 'includes the correct set of packages' do
+        expect(all_packages.count).to eq 3
+        expect(all_packages.find{|p| p.name == '.'}).to_not be_nil
+        expect(all_packages.find{|p| p.name == 'packs/my_pack'}).to_not be_nil
+        expect(all_packages.find{|p| p.name == 'packs/my_pack/subpack'}).to_not be_nil
+      end
+    end
   end
 
   describe '.yml' do
@@ -694,6 +724,34 @@ RSpec.describe ParsePackwerk do
           enforce_dependencies: expected_root_package.enforce_dependencies,
           enforce_privacy: expected_root_package.enforce_privacy,
         })
+      end
+    end
+
+    context 'in an app with nested packs' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+
+        write_file('packs/my_pack/package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+
+        write_file('packs/my_pack/file.rb')
+
+        write_file('packs/my_pack/subpack/package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+
+        write_file('packs/my_pack/subpack/file.rb')
+      end
+
+      it 'distinguishes between files in nested packs and parent packs' do
+        expect(ParsePackwerk.package_from_path('packs/my_pack/subpack/file.rb').name).to eq 'packs/my_pack/subpack'
+        expect(ParsePackwerk.package_from_path('packs/my_pack/file.rb').name).to eq 'packs/my_pack'
       end
     end
   end
