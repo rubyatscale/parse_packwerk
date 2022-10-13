@@ -7,6 +7,7 @@ module ParsePackwerk
   DEPRECATED_REFERENCES_YML_NAME = T.let('deprecated_references.yml'.freeze, String)
   ENFORCE_DEPENDENCIES = T.let('enforce_dependencies'.freeze, String)
   ENFORCE_PRIVACY = T.let('enforce_privacy'.freeze, String)
+  PUBLIC_PATH = T.let('public_path'.freeze, String)
   METADATA = T.let('metadata'.freeze, String)
   DEPENDENCIES = T.let('dependencies'.freeze, String)
 
@@ -18,4 +19,5 @@ module ParsePackwerk
 
   DEFAULT_EXCLUDE_GLOBS = T.let(["{bin,node_modules,script,tmp,vendor}/**/*"], T::Array[String])
   DEFAULT_PACKAGE_PATHS = T.let(['**/'], T::Array[String])
+  DEFAULT_PUBLIC_PATH = T.let('app/public', String)
 end
