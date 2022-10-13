@@ -61,6 +61,13 @@ module ParsePackwerk
         enforce_privacy: #{package.enforces_privacy?}
       PACKAGEYML
 
+      unless package.public_path == DEFAULT_PUBLIC_PATH
+        public_path = <<~PUBLICPATH
+          public_path: #{package.public_path}
+        PUBLICPATH
+        package_yml += public_path
+      end
+
       if package.dependencies.any?
         dependencies = <<~STATEDDEPS
           dependencies:
