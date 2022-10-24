@@ -610,6 +610,61 @@ RSpec.describe ParsePackwerk do
     end
   end
 
+  describe 'ParsePackwerk::Package#violations' do
+    context 'in app with a trivial root package' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+          enforce_privacy: false
+        CONTENTS
+      end
+
+      it 'has no violations' do
+        expect(ParsePackwerk.find('.').violations).to be_empty
+      end
+    end
+
+    context 'in app that has violations' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          enforce_privacy: true
+        CONTENTS
+
+        write_file('packs/my_pack/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          enforce_privacy: true
+        CONTENTS
+
+        write_file('packs/my_pack/deprecated_references.yml', <<~CONTENTS)
+          # This file contains a list of dependencies that are not part of the long term plan for ..
+          # We should generally work to reduce this list, but not at the expense of actually getting work done.
+          #
+          # You can regenerate this file using the following command:
+          #
+          # bundle exec packwerk update-deprecations .
+          ---
+          '.':
+            "SomeRootConstant":
+              violations:
+              - dependency
+              files:
+              - packs/my_pack/my_file.rb
+        CONTENTS
+      end
+
+      it 'has violations' do
+        expected_violation = ParsePackwerk::Violation.new(class_name: "SomeRootConstant", files: ["packs/my_pack/my_file.rb"], to_package_name: ".", type: "dependency")
+        actual_violations = ParsePackwerk.find('packs/my_pack').violations
+        expect(actual_violations.count).to eq 1
+        expect(actual_violations.first.class_name).to eq expected_violation.class_name
+        expect(actual_violations.first.files).to eq expected_violation.files
+        expect(actual_violations.first.to_package_name).to eq expected_violation.to_package_name
+        expect(actual_violations.first.type).to eq expected_violation.type
+      end
+    end
+  end
+
   describe '.yml' do
     let(:configuration) { ParsePackwerk.yml }
 
