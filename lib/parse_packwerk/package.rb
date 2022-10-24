@@ -50,5 +50,10 @@ module ParsePackwerk
     def enforces_privacy?
       enforce_privacy
     end
+
+    sig { returns(T::Array[Violation]) }
+    def violations
+      DeprecatedReferences.for(self).violations
+    end
   end
 end
