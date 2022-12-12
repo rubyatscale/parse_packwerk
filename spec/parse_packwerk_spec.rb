@@ -193,11 +193,11 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_root_deprecated_refereces) do
+      let(:expected_root_package_todo) do
         ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
       end
 
-      it { is_expected.to have_matching_package expected_root_package, expected_root_deprecated_refereces }
+      it { is_expected.to have_matching_package expected_root_package, expected_root_package_todo }
 
       let(:expected_domain_package) do
         ParsePackwerk::Package.new(
@@ -263,11 +263,11 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_root_deprecated_refereces) do
+      let(:expected_root_package_todo) do
         ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
       end
 
-      it { is_expected.to have_matching_package expected_root_package, expected_root_deprecated_refereces }
+      it { is_expected.to have_matching_package expected_root_package, expected_root_package_todo }
 
       let(:expected_domain_package) do
         ParsePackwerk::Package.new(
