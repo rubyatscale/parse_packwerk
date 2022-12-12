@@ -1,19 +1,19 @@
 # typed: strict
 
 module ParsePackwerk
-  class DeprecatedReferences < T::Struct
+  class PackageTodo < T::Struct
     extend T::Sig
 
     const :pathname, Pathname
     const :violations, T::Array[Violation]
 
-    sig { params(package: Package).returns(DeprecatedReferences) }
+    sig { params(package: Package).returns(PackageTodo) }
     def self.for(package)
-      deprecated_references_yml_pathname = package.directory.join(DEPRECATED_REFERENCES_YML_NAME)
-      DeprecatedReferences.from(deprecated_references_yml_pathname)
+      package_todo_yml_pathname = package.directory.join(PACKAGE_TODO_YML_NAME)
+      PackageTodo.from(package_todo_yml_pathname)
     end
 
-    sig { params(pathname: Pathname).returns(DeprecatedReferences) }
+    sig { params(pathname: Pathname).returns(PackageTodo) }
     def self.from(pathname)
       if !pathname.exist?
         new(
@@ -21,13 +21,13 @@ module ParsePackwerk
           violations: []
         )
       else
-        deprecated_references_loaded_yml = YAML.load_file(pathname)
+        package_todo_loaded_yml = YAML.load_file(pathname)
 
         all_violations = []
-        deprecated_references_loaded_yml&.each_key do |to_package_name|
-          deprecated_references_per_package = deprecated_references_loaded_yml[to_package_name]
-          deprecated_references_per_package.each_key do |class_name|
-            symbol_usage = deprecated_references_per_package[class_name]
+        package_todo_loaded_yml&.each_key do |to_package_name|
+          package_todo_per_package = package_todo_loaded_yml[to_package_name]
+          package_todo_per_package.each_key do |class_name|
+            symbol_usage = package_todo_per_package[class_name]
             files = symbol_usage['files']
             violations = symbol_usage['violations']
             if violations.include? 'dependency'

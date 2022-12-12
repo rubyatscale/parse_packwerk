@@ -63,8 +63,8 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_deprecated_references) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('deprecated_references.yml'))
+      let(:expected_package_todo) do
+        ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
       end
 
       it 'correctly finds the package YML' do
@@ -75,7 +75,7 @@ RSpec.describe ParsePackwerk do
         expect(expected_package.directory).to eq Pathname.new('.')
       end
 
-      it { is_expected.to have_matching_package expected_package, expected_deprecated_references }
+      it { is_expected.to have_matching_package expected_package, expected_package_todo }
     end
 
     context 'in app that enforces privacy and dependencies' do
@@ -119,11 +119,11 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_root_deprecated_references) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('deprecated_references.yml'))
+      let(:expected_root_package_todo) do
+        ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
       end
 
-      it { is_expected.to have_matching_package expected_root_package, expected_root_deprecated_references }
+      it { is_expected.to have_matching_package expected_root_package, expected_root_package_todo }
 
       let(:expected_domain_package) do
         ParsePackwerk::Package.new(
@@ -135,8 +135,8 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_domain_package_deprecated_references) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('packs/package_1/deprecated_references.yml'))
+      let(:expected_domain_package_package_todo) do
+        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package_1/package_todo.yml'))
       end
 
       it 'correctly finds the package YML' do
@@ -147,7 +147,7 @@ RSpec.describe ParsePackwerk do
         expect(expected_domain_package.directory).to eq Pathname.new('packs/package_1')
       end
 
-      it { is_expected.to have_matching_package expected_domain_package, expected_domain_package_deprecated_references }
+      it { is_expected.to have_matching_package expected_domain_package, expected_domain_package_package_todo }
     end
 
     context 'in app that has public_path' do
@@ -194,7 +194,7 @@ RSpec.describe ParsePackwerk do
       end
 
       let(:expected_root_deprecated_refereces) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('deprecated_references.yml'))
+        ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
       end
 
       it { is_expected.to have_matching_package expected_root_package, expected_root_deprecated_refereces }
@@ -210,11 +210,11 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_deprecated_references) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('packs/package_1/deprecated_references.yml'))
+      let(:expected_package_todo) do
+        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package_1/package_todo.yml'))
       end
 
-      it { is_expected.to have_matching_package expected_domain_package, expected_deprecated_references }
+      it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
     end
 
     context 'in app that has metadata' do
@@ -264,7 +264,7 @@ RSpec.describe ParsePackwerk do
       end
 
       let(:expected_root_deprecated_refereces) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('deprecated_references.yml'))
+        ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
       end
 
       it { is_expected.to have_matching_package expected_root_package, expected_root_deprecated_refereces }
@@ -284,16 +284,16 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_deprecated_references) do
-        ParsePackwerk::DeprecatedReferences.from(Pathname.new('packs/package_1/deprecated_references.yml'))
+      let(:expected_package_todo) do
+        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package_1/package_todo.yml'))
       end
 
-      it { is_expected.to have_matching_package expected_domain_package, expected_deprecated_references }
+      it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
     end
 
     context 'in app that has violations' do
       before do
-        write_file('packs/package_2/deprecated_references.yml', <<~CONTENTS)
+        write_file('packs/package_2/package_todo.yml', <<~CONTENTS)
           # This file contains a list of dependencies that are not part of the long term plan for ..
           # We should generally work to reduce this list, but not at the expense of actually getting work done.
           #
@@ -325,7 +325,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true
         CONTENTS
 
-        write_file('packs/package_1/deprecated_references.yml', <<~CONTENTS)
+        write_file('packs/package_1/package_todo.yml', <<~CONTENTS)
           # This file contains a list of dependencies that are not part of the long term plan for ..
           # We should generally work to reduce this list, but not at the expense of actually getting work done.
           #
@@ -348,7 +348,7 @@ RSpec.describe ParsePackwerk do
             - packs/package_2
         CONTENTS
 
-        write_file('deprecated_references.yml', <<~CONTENTS)
+        write_file('package_todo.yml', <<~CONTENTS)
           # This file contains a list of dependencies that are not part of the long term plan for ..
           # We should generally work to reduce this list, but not at the expense of actually getting work done.
           #
@@ -407,9 +407,9 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_deprecated_references) do
-        ParsePackwerk::DeprecatedReferences.new(
-          pathname: Pathname.new('deprecated_references.yml'),
+      let(:expected_package_todo) do
+        ParsePackwerk::PackageTodo.new(
+          pathname: Pathname.new('package_todo.yml'),
           violations: [
             ParsePackwerk::Violation.new(
               type: 'dependency',
@@ -427,7 +427,7 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      it { is_expected.to have_matching_package expected_root_package, expected_deprecated_references }
+      it { is_expected.to have_matching_package expected_root_package, expected_package_todo }
 
       let(:expected_domain_package_1) do
         ParsePackwerk::Package.new(
@@ -439,9 +439,9 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_deprecated_references_1) do
-        ParsePackwerk::DeprecatedReferences.new(
-          pathname: Pathname.new('packs/package_1/deprecated_references.yml'),
+      let(:expected_package_todo_1) do
+        ParsePackwerk::PackageTodo.new(
+          pathname: Pathname.new('packs/package_1/package_todo.yml'),
           violations: [
             ParsePackwerk::Violation.new(
               type: 'privacy',
@@ -453,7 +453,7 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      it { is_expected.to have_matching_package expected_domain_package_1, expected_deprecated_references_1 }
+      it { is_expected.to have_matching_package expected_domain_package_1, expected_package_todo_1 }
 
       let(:expected_domain_package_2) do
         ParsePackwerk::Package.new(
@@ -465,9 +465,9 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      let(:expected_domain_package_deprecated_references_2) do
-        ParsePackwerk::DeprecatedReferences.new(
-          pathname: Pathname.new('packs/package_2/deprecated_references.yml'),
+      let(:expected_domain_package_package_todo_2) do
+        ParsePackwerk::PackageTodo.new(
+          pathname: Pathname.new('packs/package_2/package_todo.yml'),
           violations: [
             ParsePackwerk::Violation.new(
               type: 'dependency',
@@ -491,7 +491,7 @@ RSpec.describe ParsePackwerk do
         )
       end
 
-      it { is_expected.to have_matching_package expected_domain_package_2, expected_domain_package_deprecated_references_2 }
+      it { is_expected.to have_matching_package expected_domain_package_2, expected_domain_package_package_todo_2 }
     end
 
     context 'in an app that has specified package paths' do
@@ -636,7 +636,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true
         CONTENTS
 
-        write_file('packs/my_pack/deprecated_references.yml', <<~CONTENTS)
+        write_file('packs/my_pack/package_todo.yml', <<~CONTENTS)
           # This file contains a list of dependencies that are not part of the long term plan for ..
           # We should generally work to reduce this list, but not at the expense of actually getting work done.
           #
@@ -881,7 +881,7 @@ RSpec.describe ParsePackwerk do
   describe 'ParsePackwerk.write_package_yml' do
     let(:package_dir) { Pathname.new('packs/example_pack') }
     let(:package_yml) { package_dir.join('package.yml') }
-    let(:deprecated_references_yml) { package_dir.join('deprecated_references.yml') }
+    let(:package_todo_yml) { package_dir.join('package_todo.yml') }
 
     def build_pack(public_path: 'app/public', dependencies: [], metadata: {})
       ParsePackwerk::Package.new(
