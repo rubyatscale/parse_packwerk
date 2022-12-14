@@ -30,12 +30,8 @@ module ParsePackwerk
             symbol_usage = package_todo_per_package[class_name]
             files = symbol_usage['files']
             violations = symbol_usage['violations']
-            if violations.include? 'dependency'
-              all_violations << Violation.new(type: 'dependency', to_package_name: to_package_name, class_name: class_name, files: files)
-            end
-
-            if violations.include? 'privacy'
-              all_violations << Violation.new(type: 'privacy', to_package_name: to_package_name, class_name: class_name, files: files)
+            violations.uniq.each do |violation_type|
+              all_violations << Violation.new(type: violation_type, to_package_name: to_package_name, class_name: class_name, files: files)
             end
           end
         end
