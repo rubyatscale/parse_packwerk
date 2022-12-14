@@ -53,7 +53,7 @@ module ParsePackwerk
 
     sig { returns(T::Array[Violation]) }
     def violations
-      DeprecatedReferences.for(self).violations
+      PackageTodo.for(self).violations
     end
   end
 end

@@ -10,15 +10,15 @@ packages = ParsePackwerk.all
 # Get a single package with a given ame
 package = ParsePackwerk.find('packs/my_pack')
 
-# Get a structured `deprecated_references.yml` object a single package
-deprecated_references = ParsePackwerk::DeprecatedReferences.for(package)
+# Get a structured `package_todo.yml` object a single package
+package_todo = ParsePackwerk::PackageTodo.for(package)
 
 # Count violations of a particular type for a package
-deprecated_references.violations.count(&:privacy?)
-deprecated_references.violations.count(&:dependency?)
+package_todo.violations.count(&:privacy?)
+package_todo.violations.count(&:dependency?)
 
 # Get the number of files a particular constant is violated in
-deprecated_references.violations.select { |v| v.class_name == 'SomeConstant' }.sum { |v| v.files.count }
+package_todo.violations.select { |v| v.class_name == 'SomeConstant' }.sum { |v| v.files.count }
 ```
 
 # Why does this gem exist?

@@ -4,7 +4,7 @@ module ParsePackwerk
   ROOT_PACKAGE_NAME = T.let('.'.freeze, String)
   PACKAGE_YML_NAME = T.let('package.yml'.freeze, String)
   PACKWERK_YML_NAME = T.let('packwerk.yml'.freeze, String)
-  DEPRECATED_REFERENCES_YML_NAME = T.let('deprecated_references.yml'.freeze, String)
+  PACKAGE_TODO_YML_NAME = T.let('package_todo.yml'.freeze, String)
   ENFORCE_DEPENDENCIES = T.let('enforce_dependencies'.freeze, String)
   ENFORCE_PRIVACY = T.let('enforce_privacy'.freeze, String)
   PUBLIC_PATH = T.let('public_path'.freeze, String)
