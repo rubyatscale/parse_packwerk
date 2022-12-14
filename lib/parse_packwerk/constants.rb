@@ -7,6 +7,8 @@ module ParsePackwerk
   PACKAGE_TODO_YML_NAME = T.let('package_todo.yml'.freeze, String)
   ENFORCE_DEPENDENCIES = T.let('enforce_dependencies'.freeze, String)
   ENFORCE_PRIVACY = T.let('enforce_privacy'.freeze, String)
+  DEPENDENCY_VIOLATION_TYPE = T.let('dependency'.freeze, String)
+  PRIVACY_VIOLATION_TYPE = T.let('privacy'.freeze, String)
   PUBLIC_PATH = T.let('public_path'.freeze, String)
   METADATA = T.let('metadata'.freeze, String)
   DEPENDENCIES = T.let('dependencies'.freeze, String)
