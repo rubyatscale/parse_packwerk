@@ -5,8 +5,8 @@ module ParsePackwerk
     extend T::Sig
 
     const :name, String
-    const :enforce_dependencies, T::Boolean
-    const :enforce_privacy, T::Boolean
+    const :enforce_dependencies, T.any(T::Boolean, String)
+    const :enforce_privacy, T.any(T::Boolean, String)
     const :public_path, String, default: DEFAULT_PUBLIC_PATH
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
@@ -41,12 +41,12 @@ module ParsePackwerk
       directory.join(public_path).cleanpath
     end
 
-    sig { returns(T::Boolean) }
+    sig { returns(T.any(T::Boolean, String)) }
     def enforces_dependencies?
       enforce_dependencies
     end
 
-    sig { returns(T::Boolean) }
+    sig { returns(T.any(T::Boolean, String)) }
     def enforces_privacy?
       enforce_privacy
     end
