@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    parse_packwerk (0.16.0)
+    parse_packwerk (0.17.0)
       sorbet-runtime
 
 GEM

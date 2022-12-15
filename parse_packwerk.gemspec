@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "parse_packwerk"
-  spec.version       = '0.16.0'
+  spec.version       = '0.17.0'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A low-dependency gem for parsing and writing packwerk YML files'
