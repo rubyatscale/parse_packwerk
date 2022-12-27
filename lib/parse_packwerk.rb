@@ -53,44 +53,42 @@ module ParsePackwerk
   sig { params(package: ParsePackwerk::Package).void }
   def self.write_package_yml!(package)
     FileUtils.mkdir_p(package.directory)
+    
     File.open(package.yml, 'w') do |file|
-      # We do not use `YAML.dump` or `contents.to_yaml` because it seems like packwerk writes a variation of the default YAML spec.
-      # If you'd like to see the difference, change this to `package_yaml = YAML.dump(contents)` to and run tests to see the difference.
-      package_yml = <<~PACKAGEYML
-        enforce_dependencies: #{package.enforces_dependencies?}
-        enforce_privacy: #{package.enforces_privacy?}
-      PACKAGEYML
+      merged_config = package.config
+
+      merged_config.merge!(
+        'enforce_dependencies' => package.enforces_dependencies?,
+        'enforce_privacy' => package.enforces_privacy?
+      )
+
+      # We want checkers of the form `enforce_xyz` to be at the top
+      merged_config_arr = merged_config.sort_by do |k, v|
+        if k.include?('enforce')
+          0
+        else
+          1
+        end
+      end
+
+      merged_config = merged_config_arr.to_h
 
       unless package.public_path == DEFAULT_PUBLIC_PATH
-        public_path = <<~PUBLICPATH
-          public_path: #{package.public_path}
-        PUBLICPATH
-        package_yml += public_path
+        merged_config.merge!('public_path' => package.public_path)
       end
 
       if package.dependencies.any?
-        dependencies = <<~STATEDDEPS
-          dependencies:
-          #{package.dependencies.map { |dep| "  - #{dep}" }.join("\n")}
-        STATEDDEPS
-
-        package_yml += dependencies
+        merged_config.merge!('dependencies' => package.dependencies)
       end
 
-      if package.metadata.keys.any?
-        raw_yaml = YAML.dump(package.metadata)
-        stylized_yaml = raw_yaml.gsub("---\n", '')
-        indented_yaml = stylized_yaml.split("\n").map { |line| "  #{line}" }.join("\n")
-
-        metadata = <<~METADATA
-          metadata:
-          #{indented_yaml}
-        METADATA
-
-        package_yml += metadata
+      if package.metadata.any?
+        merged_config.merge!('metadata' => package.metadata)
       end
-
-      file.write(package_yml)
+      raw_yaml = YAML.dump(merged_config)
+      # Add indentation for dependencies
+      raw_yaml.gsub!(/^- /,"  - ")
+      stylized_yaml = raw_yaml.gsub("---\n", '')
+      file.write(stylized_yaml)
     end
   end
 
