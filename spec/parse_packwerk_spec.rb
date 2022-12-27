@@ -60,6 +60,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: false,
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -116,6 +117,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: false,
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -132,6 +134,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true,
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -190,6 +193,7 @@ RSpec.describe ParsePackwerk do
           public_path: 'app/public',
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -207,6 +211,7 @@ RSpec.describe ParsePackwerk do
           public_path: 'other/path',
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -260,6 +265,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: false,
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -281,6 +287,7 @@ RSpec.describe ParsePackwerk do
             'not_obviously_a_boolean_key' => false,
             'numeric_key' => 123,
           },
+          config: {},
         )
       end
 
@@ -404,6 +411,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: false,
           dependencies: ['packs/package_2'],
           metadata: {},
+          config: {},
         )
       end
 
@@ -436,6 +444,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true,
           dependencies: ['packs/package_2'],
           metadata: {},
+          config: {},
         )
       end
 
@@ -462,6 +471,7 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true,
           dependencies: [],
           metadata: {},
+          config: {},
         )
       end
 
@@ -770,7 +780,8 @@ RSpec.describe ParsePackwerk do
         enforce_privacy: true,
         dependencies: [],
         metadata: {},
-        )
+        config: {},
+      )
     end
 
     let(:expected_package_1_new) do
@@ -780,7 +791,8 @@ RSpec.describe ParsePackwerk do
         enforce_privacy: false,
         dependencies: [],
         metadata: {},
-        )
+        config: {},
+      )
     end
 
     context 'given a filepath in pack_1' do
@@ -835,7 +847,8 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: false,
           dependencies: [],
           metadata: {},
-          )
+          config: {},
+        )
       end
 
       it 'returns the root pack' do
@@ -883,14 +896,15 @@ RSpec.describe ParsePackwerk do
     let(:package_yml) { package_dir.join('package.yml') }
     let(:package_todo_yml) { package_dir.join('package_todo.yml') }
 
-    def build_pack(public_path: 'app/public', dependencies: [], metadata: {})
+    def build_pack(public_path: 'app/public', enforce_privacy: true, dependencies: [], metadata: {}, config: {})
       ParsePackwerk::Package.new(
         name: package_dir.to_s,
         enforce_dependencies: true,
-        enforce_privacy: true,
+        enforce_privacy: enforce_privacy,
         public_path: public_path,
         dependencies: dependencies,
-        metadata: metadata
+        metadata: metadata,
+        config: config,
       )
     end
 
@@ -935,7 +949,23 @@ RSpec.describe ParsePackwerk do
         expect(all_packages.count).to eq 1
         expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
       end
+    end
 
+    context 'package with strict checker enforcement' do
+      let(:package) do
+        build_pack(enforce_privacy: 'strict')
+      end
+
+      it 'writes the right package' do
+        ParsePackwerk.write_package_yml!(package)
+        expect(package_yml.read).to eq <<~PACKAGEYML
+          enforce_dependencies: true
+          enforce_privacy: strict
+        PACKAGEYML
+
+        expect(all_packages.count).to eq 1
+        expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
+      end
     end
 
     context 'package with dependencies' do
@@ -977,6 +1007,30 @@ RSpec.describe ParsePackwerk do
             protections:
               prevent_untyped_api: fail_if_any
               prevent_violations: false
+        PACKAGEYML
+
+        expect(all_packages.count).to eq 1
+        expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
+      end
+    end
+
+    context 'package with other top-level config' do
+      let(:package) do
+        build_pack(config: {
+          'my_special_key' => { 'blah' => 1 },
+          'my_other_special_key' => true
+        })
+      end
+
+      it 'writes the right package' do
+        ParsePackwerk.write_package_yml!(package)
+
+        expect(package_yml.read).to eq <<~PACKAGEYML
+          enforce_dependencies: true
+          enforce_privacy: true
+          my_special_key:
+            blah: 1
+          my_other_special_key: true
         PACKAGEYML
 
         expect(all_packages.count).to eq 1

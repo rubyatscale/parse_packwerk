@@ -10,6 +10,7 @@ module ParsePackwerk
     const :public_path, String, default: DEFAULT_PUBLIC_PATH
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
+    const :config, T::Hash[T.untyped, T.untyped]
 
     sig { params(pathname: Pathname).returns(Package) }
     def self.from(pathname)
@@ -18,11 +19,12 @@ module ParsePackwerk
 
       new(
         name: package_name,
-        enforce_dependencies: package_loaded_yml[ENFORCE_DEPENDENCIES] ? true : false,
-        enforce_privacy: package_loaded_yml[ENFORCE_PRIVACY] ? true : false,
+        enforce_dependencies: package_loaded_yml[ENFORCE_DEPENDENCIES],
+        enforce_privacy: package_loaded_yml[ENFORCE_PRIVACY],
         public_path: package_loaded_yml[PUBLIC_PATH] || DEFAULT_PUBLIC_PATH,
         metadata: package_loaded_yml[METADATA] || {},
-        dependencies: package_loaded_yml[DEPENDENCIES] || []
+        dependencies: package_loaded_yml[DEPENDENCIES] || [],
+        config: package_loaded_yml,
       )
     end
 
