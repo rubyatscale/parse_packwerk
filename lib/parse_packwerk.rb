@@ -58,8 +58,8 @@ module ParsePackwerk
       merged_config = package.config
 
       merged_config.merge!(
-        'enforce_dependencies' => package.enforces_dependencies?,
-        'enforce_privacy' => package.enforces_privacy?
+        'enforce_dependencies' => package.enforce_dependencies,
+        'enforce_privacy' => package.enforce_privacy
       )
 
       # We want checkers of the form `enforce_xyz` to be at the top

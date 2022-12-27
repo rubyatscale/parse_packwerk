@@ -896,11 +896,11 @@ RSpec.describe ParsePackwerk do
     let(:package_yml) { package_dir.join('package.yml') }
     let(:package_todo_yml) { package_dir.join('package_todo.yml') }
 
-    def build_pack(public_path: 'app/public', dependencies: [], metadata: {}, config: {})
+    def build_pack(public_path: 'app/public', enforce_privacy: true, dependencies: [], metadata: {}, config: {})
       ParsePackwerk::Package.new(
         name: package_dir.to_s,
         enforce_dependencies: true,
-        enforce_privacy: true,
+        enforce_privacy: enforce_privacy,
         public_path: public_path,
         dependencies: dependencies,
         metadata: metadata,
@@ -949,7 +949,23 @@ RSpec.describe ParsePackwerk do
         expect(all_packages.count).to eq 1
         expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
       end
+    end
 
+    context 'package with strict checker enforcement' do
+      let(:package) do
+        build_pack(enforce_privacy: 'strict')
+      end
+
+      it 'writes the right package' do
+        ParsePackwerk.write_package_yml!(package)
+        expect(package_yml.read).to eq <<~PACKAGEYML
+          enforce_dependencies: true
+          enforce_privacy: strict
+        PACKAGEYML
+
+        expect(all_packages.count).to eq 1
+        expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
+      end
     end
 
     context 'package with dependencies' do
