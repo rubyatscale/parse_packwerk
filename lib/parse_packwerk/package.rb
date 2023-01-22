@@ -57,5 +57,24 @@ module ParsePackwerk
     def violations
       PackageTodo.for(self).violations
     end
+
+    # Returns all transitive dependencies using post-order depth first search, so all dependencies of a package appear
+    # before the package. This does not preserve the order of direct dependencies if they depend on each other.
+    sig { returns(T::Array[String]) }
+    def transitive_dependencies
+      @transitive_dependencies ||= T.let(nil, T.nilable(T::Array[String]))
+      @transitive_dependencies ||= begin
+        remaining = dependencies.dup
+        result = T::Array[String].new
+        while (dep = remaining.shift)
+          dep_transitive_deps = ParsePackwerk.find(dep)&.transitive_dependencies || T::Array[String].new
+
+          remaining -= dep_transitive_deps
+          result |= dep_transitive_deps
+          result << dep
+        end
+        result.freeze
+      end
+    end
   end
 end

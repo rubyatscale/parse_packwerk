@@ -79,6 +79,31 @@ RSpec.describe ParsePackwerk do
       it { is_expected.to have_matching_package expected_package, expected_package_todo }
     end
 
+    context 'in app that has packages with dependencies' do
+      before do
+        write_file('packs/a/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          dependencies:
+            - packs/b
+            - packs/c
+        CONTENTS
+
+        write_file('packs/b/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          dependencies:
+            - packs/c
+        CONTENTS
+
+        write_file('packs/c/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+        CONTENTS
+      end
+
+      it 'returns transitive_dependencies in the correct order' do
+        expect(ParsePackwerk.find('packs/a').transitive_dependencies).to eq ['packs/c', 'packs/b']
+      end
+    end
+
     context 'in app that enforces privacy and dependencies' do
       before do
         write_file('packs/package_1/package.yml', <<~CONTENTS)
