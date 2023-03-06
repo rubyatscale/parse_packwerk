@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "parse_packwerk"
-  spec.version       = '0.18.0'
+  spec.version       = '0.18.1'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A low-dependency gem for parsing and writing packwerk YML files'
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   end
 
   # Specify which files should be added to the gem when it is released.
-  spec.files = Dir['README.md', 'sorbet/**/*', 'lib/**/*']
+  spec.files = Dir['README.md', 'lib/**/*']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 2.6'
 
