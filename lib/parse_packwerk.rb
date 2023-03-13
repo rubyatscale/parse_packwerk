@@ -77,7 +77,9 @@ module ParsePackwerk
         merged_config.merge!('public_path' => package.public_path)
       end
 
-      if package.dependencies.any?
+      if package.dependencies.nil? || package.dependencies.none?
+        merged_config.delete('dependencies')
+      else
         merged_config.merge!('dependencies' => package.dependencies)
       end
 
