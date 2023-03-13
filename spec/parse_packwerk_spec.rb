@@ -1012,6 +1012,34 @@ RSpec.describe ParsePackwerk do
         expect(all_packages.count).to eq 1
         expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
       end
+
+      context 'overwriting an existing package file' do
+        before do
+          write_file(package_yml, <<~CONTENTS)
+            enforce_dependencies: true
+            enforce_privacy: true
+            public_path: other/path
+            dependencies:
+            - packs/package_2
+          CONTENTS
+        end
+
+        let(:existing_package) do
+          ParsePackwerk.find('packs/example_pack')
+        end
+
+        it 'allows you to remove the dependencies list' do
+          new_package = existing_package.with(dependencies: [])
+
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_dependencies: true
+            enforce_privacy: true
+            public_path: other/path
+          PACKAGEYML
+        end
+      end
     end
 
     context 'package with other top-level config' do
