@@ -6,7 +6,7 @@ module ParsePackwerk
 
     const :name, String
     const :enforce_dependencies, T.any(T::Boolean, String)
-    const :enforce_privacy, T.any(T::Boolean, String)
+    const :enforce_privacy, T.any(T::Boolean, String), default: false
     const :public_path, String, default: DEFAULT_PUBLIC_PATH
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
@@ -20,7 +20,7 @@ module ParsePackwerk
       new(
         name: package_name,
         enforce_dependencies: package_loaded_yml[ENFORCE_DEPENDENCIES],
-        enforce_privacy: package_loaded_yml[ENFORCE_PRIVACY],
+        enforce_privacy: package_loaded_yml[ENFORCE_PRIVACY] || false,
         public_path: package_loaded_yml[PUBLIC_PATH] || DEFAULT_PUBLIC_PATH,
         metadata: package_loaded_yml[METADATA] || {},
         dependencies: package_loaded_yml[DEPENDENCIES] || [],
