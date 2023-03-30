@@ -2,7 +2,15 @@
 
 RSpec.describe ParsePackwerk do
   before do
+    write_packwerk_yml
     ParsePackwerk.bust_cache!
+  end
+
+  let(:write_packwerk_yml) do
+    write_file('packwerk.yml', <<~YML)
+      require:
+        - packwerk-extensions
+      YML
   end
 
   def hashify_violations(violations)
@@ -1059,6 +1067,24 @@ RSpec.describe ParsePackwerk do
           my_special_key:
             blah: 1
           my_other_special_key: true
+        PACKAGEYML
+
+        expect(all_packages.count).to eq 1
+        expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
+      end
+    end
+
+    context 'app does not use privacy checker' do
+      let(:write_packwerk_yml) do
+        write_file('packwerk.yml', '{}')
+      end
+
+      let(:package) { build_pack }
+
+      it 'writes the right package' do
+        ParsePackwerk.write_package_yml!(package)
+        expect(package_yml.read).to eq <<~PACKAGEYML
+          enforce_dependencies: true
         PACKAGEYML
 
         expect(all_packages.count).to eq 1
