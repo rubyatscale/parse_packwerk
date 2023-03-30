@@ -1113,7 +1113,7 @@ RSpec.describe ParsePackwerk do
         write_file('packwerk.yml', '{}')
       end
 
-      let(:package) { build_pack }
+      let(:package) { build_pack(enforce_privacy: false) }
 
       it 'writes the right package' do
         ParsePackwerk.write_package_yml!(package)
