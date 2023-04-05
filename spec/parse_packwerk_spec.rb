@@ -2,7 +2,15 @@
 
 RSpec.describe ParsePackwerk do
   before do
+    write_packwerk_yml
     ParsePackwerk.bust_cache!
+  end
+
+  let(:write_packwerk_yml) do
+    write_file('packwerk.yml', <<~YML)
+      require:
+        - packwerk-extensions
+      YML
   end
 
   def hashify_violations(violations)
@@ -618,6 +626,40 @@ RSpec.describe ParsePackwerk do
         expect(all_packages.find{|p| p.name == 'packs/my_pack/subpack'}).to_not be_nil
       end
     end
+
+    context 'in an app that does not use privacy checker' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+          enforce_dependencies: false
+        CONTENTS
+      end
+
+      let(:expected_package) do
+        ParsePackwerk::Package.new(
+          name: '.',
+          enforce_dependencies: false,
+          enforce_privacy: false,
+          dependencies: [],
+          metadata: {},
+          config: {},
+        )
+      end
+
+      let(:expected_package_todo) do
+        ParsePackwerk::PackageTodo.from(Pathname.new('package_todo.yml'))
+      end
+
+      it 'correctly finds the package YML' do
+        expect(expected_package.yml).to eq Pathname.new('package.yml')
+      end
+
+      it 'correctly finds the package directory' do
+        expect(expected_package.directory).to eq Pathname.new('.')
+      end
+
+      it { is_expected.to have_matching_package expected_package, expected_package_todo }
+    end
+
   end
 
   describe 'ParsePackwerk::Package#violations' do
@@ -1059,6 +1101,24 @@ RSpec.describe ParsePackwerk do
           my_special_key:
             blah: 1
           my_other_special_key: true
+        PACKAGEYML
+
+        expect(all_packages.count).to eq 1
+        expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
+      end
+    end
+
+    context 'app does not use privacy checker' do
+      let(:write_packwerk_yml) do
+        write_file('packwerk.yml', '{}')
+      end
+
+      let(:package) { build_pack(enforce_privacy: false) }
+
+      it 'writes the right package' do
+        ParsePackwerk.write_package_yml!(package)
+        expect(package_yml.read).to eq <<~PACKAGEYML
+          enforce_dependencies: true
         PACKAGEYML
 
         expect(all_packages.count).to eq 1

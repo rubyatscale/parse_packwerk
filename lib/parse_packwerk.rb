@@ -9,6 +9,7 @@ require 'parse_packwerk/package_todo'
 require 'parse_packwerk/package'
 require 'parse_packwerk/configuration'
 require 'parse_packwerk/package_set'
+require 'parse_packwerk/extensions'
 
 module ParsePackwerk
   class MissingConfiguration < StandardError
@@ -57,10 +58,11 @@ module ParsePackwerk
     File.open(package.yml, 'w') do |file|
       merged_config = package.config
 
-      merged_config.merge!(
-        'enforce_dependencies' => package.enforce_dependencies,
-        'enforce_privacy' => package.enforce_privacy
-      )
+      merged_config.merge!('enforce_dependencies' => package.enforce_dependencies,)
+
+      if Extensions.privacy_extension_installed?
+        merged_config.merge!('enforce_privacy' => package.enforce_privacy)
+      end
 
       # We want checkers of the form `enforce_xyz` to be at the top
       merged_config_arr = merged_config.sort_by do |k, v|
