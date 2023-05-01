@@ -667,7 +667,7 @@ RSpec.describe ParsePackwerk do
       end
 
       it 'outputs an error message with the pathname' do
-        expect{subject}.to raise_error(NoMethodError, /undefined method `\[\]' for false:FalseClass/)
+        expect{subject}.to raise_error(ParsePackwerk::PackageParseError, /Failed to parse `packs\/my_pack\/package.yml`. Please fix any issues with this package.yml OR add its containing folder to packwerk.yml `exclude`/)
       end
     end
   end
