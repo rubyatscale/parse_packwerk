@@ -12,6 +12,9 @@ require 'parse_packwerk/package_set'
 require 'parse_packwerk/extensions'
 
 module ParsePackwerk
+  class PackageParseError < StandardError
+  end
+
   class MissingConfiguration < StandardError
     extend T::Sig
 
