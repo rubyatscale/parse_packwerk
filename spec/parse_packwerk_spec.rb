@@ -660,6 +660,16 @@ RSpec.describe ParsePackwerk do
       it { is_expected.to have_matching_package expected_package, expected_package_todo }
     end
 
+    context 'in app with an invalid package.yml' do
+      before do
+        write_file('packs/my_pack/package.yml', <<~CONTENTS)
+        CONTENTS
+      end
+
+      it 'outputs an error message with the pathname' do
+        expect{subject}.to raise_error(NoMethodError, /undefined method `\[\]' for false:FalseClass/)
+      end
+    end
   end
 
   describe 'ParsePackwerk::Package#violations' do
