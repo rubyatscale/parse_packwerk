@@ -3,6 +3,11 @@
 require 'sorbet-runtime'
 require 'yaml'
 require 'pathname'
+
+# fileutils is loaded by a development gem dependency, but requiring here so clients
+# do not get `uninitialized constant ParsePackwerk::FileUtils`
+require 'fileutils'
+
 require 'parse_packwerk/constants'
 require 'parse_packwerk/violation'
 require 'parse_packwerk/package_todo'
