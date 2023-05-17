@@ -72,17 +72,6 @@ module ParsePackwerk
         merged_config.merge!('enforce_privacy' => package.enforce_privacy)
       end
 
-      # We want checkers of the form `enforce_xyz` to be at the top
-      merged_config_arr = merged_config.sort_by do |k, v|
-        if k.include?('enforce')
-          0
-        else
-          1
-        end
-      end
-
-      merged_config = merged_config_arr.to_h
-
       unless package.public_path == DEFAULT_PUBLIC_PATH
         merged_config.merge!('public_path' => package.public_path)
       end
@@ -96,12 +85,33 @@ module ParsePackwerk
       if package.metadata.any?
         merged_config.merge!('metadata' => package.metadata)
       end
+
+      sorted_keys = key_sort_order
+      merged_config = merged_config.to_a.sort_by{|key, value| T.unsafe(sorted_keys).index(key) || 1000 }.to_h
+
       raw_yaml = YAML.dump(merged_config)
       # Add indentation for dependencies
       raw_yaml.gsub!(/^- /,"  - ")
       stylized_yaml = raw_yaml.gsub("---\n", '')
       file.write(stylized_yaml)
     end
+  end
+
+  sig { returns(T::Array[String]) }
+  def self.key_sort_order
+    %w(
+      enforce_dependencies
+      enforce_privacy
+      enforce_visibility
+      enforce_architecture
+      public_path
+      owner
+      layer
+      dependencies
+      ignored_dependencies
+      visible_to
+      metadata
+    )
   end
 
   # We memoize packages_by_name for fast lookup.
