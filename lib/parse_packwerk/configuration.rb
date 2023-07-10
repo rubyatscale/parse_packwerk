@@ -7,6 +7,7 @@ module ParsePackwerk
     const :exclude, T::Array[String]
     const :package_paths, T::Array[String]
     const :requires, T::Array[String]
+    const :raw, T::Hash[String, T.untyped]
 
     sig { returns(Configuration) }
     def self.fetch
@@ -22,7 +23,8 @@ module ParsePackwerk
       Configuration.new(
         exclude: excludes(raw_packwerk_config),
         package_paths: package_paths(raw_packwerk_config),
-        requires: raw_packwerk_config['require'] || []
+        requires: raw_packwerk_config['require'] || [],
+        raw: raw_packwerk_config
       )
     end
 
