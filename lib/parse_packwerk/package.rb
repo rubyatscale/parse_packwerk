@@ -11,6 +11,7 @@ module ParsePackwerk
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
     const :config, T::Hash[T.untyped, T.untyped]
+    const :stored_violations, T.nilable(T::Array[Violation])
 
     sig { params(pathname: Pathname).returns(Package) }
     def self.from(pathname)
@@ -29,6 +30,7 @@ module ParsePackwerk
         metadata: package_loaded_yml[METADATA] || {},
         dependencies: package_loaded_yml[DEPENDENCIES] || [],
         config: package_loaded_yml,
+        stored_violations: nil
       )
     end
 
@@ -59,7 +61,7 @@ module ParsePackwerk
 
     sig { returns(T::Array[Violation]) }
     def violations
-      PackageTodo.for(self).violations
+      stored_violations || PackageTodo.for(self).violations
     end
   end
 end
