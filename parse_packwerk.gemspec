@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "parse_packwerk"
-  spec.version       = '0.19.3'
+  spec.version       = '0.20.0'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
   spec.summary       = 'A low-dependency gem for parsing and writing packwerk YML files'
@@ -25,7 +25,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'sorbet-runtime'
 
-  spec.add_development_dependency 'bundler', '~> 2.2.16'
+  spec.add_development_dependency 'bundler', '~> 2.2'
+  spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'sorbet'
