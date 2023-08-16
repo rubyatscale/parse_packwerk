@@ -9,8 +9,7 @@ module ParsePackwerk
 
     sig { params(package: Package).returns(PackageTodo) }
     def self.for(package)
-      package_todo_yml_pathname = package.directory.join(PACKAGE_TODO_YML_NAME)
-      PackageTodo.from(package_todo_yml_pathname)
+      PackageTodo.from(self.yml(package.directory))
     end
 
     sig { params(pathname: Pathname).returns(PackageTodo) }
@@ -41,6 +40,11 @@ module ParsePackwerk
           violations: all_violations
         )
       end
+    end
+    
+    sig { params(dirname: Pathname).returns(Pathname) }
+    def self.yml(dirname)
+      dirname.join(PACKAGE_TODO_YML_NAME).cleanpath
     end
   end
 end

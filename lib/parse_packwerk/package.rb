@@ -11,6 +11,7 @@ module ParsePackwerk
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
     const :config, T::Hash[T.untyped, T.untyped]
+    const :violations, T.nilable(T::Array[Violation])
 
     sig { params(pathname: Pathname).returns(Package) }
     def self.from(pathname)
@@ -29,7 +30,13 @@ module ParsePackwerk
         metadata: package_loaded_yml[METADATA] || {},
         dependencies: package_loaded_yml[DEPENDENCIES] || [],
         config: package_loaded_yml,
+        violations: PackageTodo.from(PackageTodo.yml(directory(package_name))).violations
       )
+    end
+
+    sig { params(package_name: String).returns(::Pathname) }
+    def self.directory(package_name)
+      Pathname.new(package_name).cleanpath
     end
 
     sig { returns(Pathname) }
@@ -39,7 +46,7 @@ module ParsePackwerk
 
     sig { returns(Pathname) }
     def directory
-      Pathname.new(name).cleanpath
+      self.class.directory(self.name)
     end
 
     sig { returns(Pathname) }
@@ -55,11 +62,6 @@ module ParsePackwerk
     sig { returns(T.any(T::Boolean, String)) }
     def enforces_privacy?
       enforce_privacy
-    end
-
-    sig { returns(T::Array[Violation]) }
-    def violations
-      PackageTodo.for(self).violations
     end
   end
 end
