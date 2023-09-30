@@ -41,20 +41,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -98,20 +98,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -173,20 +173,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -230,6 +230,25 @@ RSpec.describe ParsePackwerk do
       it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
     end
 
+    context 'package does not declare enforce_dependencies' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+
+          # A list of this package's dependencies
+          # Note that packages in this list require their own `package.yml` file
+          dependencies:
+        CONTENTS
+      end
+
+      let(:valid_package) {
+        ParsePackwerk::Package.from(Pathname.new('package.yml'))
+      }
+
+      it 'should be valid' do
+        expect { valid_package }.to_not raise_error
+      end
+    end
+
     context 'in app that has metadata' do
       before do
         write_file('packs/package_1/package.yml', <<~CONTENTS)
@@ -246,20 +265,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -391,20 +410,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: true
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
