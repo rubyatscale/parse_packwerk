@@ -13,19 +13,6 @@ RSpec.describe ParsePackwerk do
       YML
   end
 
-  def hashify_violations(violations)
-    violations.map { |v| hashify_violation(v) }
-  end
-
-  def hashify_violation(v)
-    {
-      type: v.type,
-      to_package_name: v.to_package_name,
-      class_name: v.to_package_name,
-      files: v.files
-    }
-  end
-
   subject(:all_packages) do
     ParsePackwerk.all
   end
