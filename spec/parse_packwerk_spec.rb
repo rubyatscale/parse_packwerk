@@ -69,6 +69,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -126,6 +127,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -143,6 +145,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -202,6 +205,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -220,6 +224,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -274,6 +279,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -296,6 +302,7 @@ RSpec.describe ParsePackwerk do
             'numeric_key' => 123,
           },
           config: {},
+          violations: [],
         )
       end
 
@@ -420,6 +427,7 @@ RSpec.describe ParsePackwerk do
           dependencies: ['packs/package_2'],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -453,6 +461,7 @@ RSpec.describe ParsePackwerk do
           dependencies: ['packs/package_2'],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -480,6 +489,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -642,6 +652,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -833,6 +844,7 @@ RSpec.describe ParsePackwerk do
         dependencies: [],
         metadata: {},
         config: {},
+        violations: [],
       )
     end
 
@@ -844,6 +856,7 @@ RSpec.describe ParsePackwerk do
         dependencies: [],
         metadata: {},
         config: {},
+        violations: [],
       )
     end
 
@@ -900,6 +913,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
+          violations: [],
         )
       end
 
@@ -957,6 +971,7 @@ RSpec.describe ParsePackwerk do
         dependencies: dependencies,
         metadata: metadata,
         config: config,
+        violations: [],
       )
     end
 
