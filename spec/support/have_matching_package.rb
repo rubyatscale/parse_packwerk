@@ -13,6 +13,19 @@ RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_pa
     "to have a package named #{expected_package.package_name.inspect} with identical attributes"
   end
 
+  def hashify_violations(violations)
+    violations.map { |v| hashify_violation(v) }
+  end
+
+  def hashify_violation(v)
+    {
+      type: v.type,
+      to_package_name: v.to_package_name,
+      class_name: v.to_package_name,
+      files: v.files
+    }
+  end
+
   def deep_hashify_package(package, package_todo)
     {
       name: package.name,

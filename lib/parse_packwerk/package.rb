@@ -11,7 +11,7 @@ module ParsePackwerk
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
     const :config, T::Hash[T.untyped, T.untyped]
-    const :violations, T.nilable(T::Array[Violation])
+    const :violations, T::Array[Violation]
 
     sig { params(pathname: Pathname).returns(Package) }
     def self.from(pathname)
