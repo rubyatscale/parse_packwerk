@@ -62,11 +62,11 @@ module ParsePackwerk
   sig { params(package: ParsePackwerk::Package).void }
   def self.write_package_yml!(package)
     FileUtils.mkdir_p(package.directory)
-    
+
     File.open(package.yml, 'w') do |file|
       merged_config = package.config
 
-      merged_config.merge!('enforce_dependencies' => package.enforce_dependencies,)
+      merged_config.merge!('enforce_dependencies' => package.enforce_dependencies)
 
       if Extensions.privacy_extension_installed?
         merged_config.merge!('enforce_privacy' => package.enforce_privacy)
@@ -87,11 +87,11 @@ module ParsePackwerk
       end
 
       sorted_keys = key_sort_order
-      merged_config = merged_config.to_a.sort_by{|key, value| T.unsafe(sorted_keys).index(key) || 1000 }.to_h
+      merged_config = merged_config.to_a.sort_by { |key, _value| T.unsafe(sorted_keys).index(key) || 1000 }.to_h
 
       raw_yaml = YAML.dump(merged_config)
       # Add indentation for dependencies
-      raw_yaml.gsub!(/^- /,"  - ")
+      raw_yaml.gsub!(/^- /, '  - ')
       stylized_yaml = raw_yaml.gsub("---\n", '')
       file.write(stylized_yaml)
     end
@@ -99,7 +99,7 @@ module ParsePackwerk
 
   sig { returns(T::Array[String]) }
   def self.key_sort_order
-    %w(
+    %w[
       enforce_dependencies
       enforce_privacy
       enforce_visibility
@@ -111,7 +111,7 @@ module ParsePackwerk
       ignored_dependencies
       visible_to
       metadata
-    )
+    ]
   end
 
   # We memoize packages_by_name for fast lookup.
@@ -124,7 +124,7 @@ module ParsePackwerk
       # We want to match more specific paths first
       # Packwerk does this too and is necessary for package_from_path to work correctly.
       sorted_packages = all_packages.sort_by { |package| -package.name.length }
-      sorted_packages.map{|p| [p.name, p]}.to_h
+      sorted_packages.to_h { |p| [p.name, p] }
     end
   end
 

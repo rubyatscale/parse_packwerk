@@ -2,7 +2,7 @@ RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_pa
   match do |actual_packages|
     @actual_packages = actual_packages
     @expected_package = expected_package
-    @actual_package = actual_packages.find{|actual_package| actual_package.name == expected_package.name}
+    @actual_package = actual_packages.find { |actual_package| actual_package.name == expected_package.name }
     @actual_package_todo = @actual_package && ParsePackwerk::PackageTodo.for(@actual_package)
     @hashified_expected = deep_hashify_package(expected_package, expected_package_todo)
     @hashified_actual = deep_hashify_package(@actual_package, @actual_package_todo)
@@ -17,12 +17,12 @@ RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_pa
     violations.map { |v| hashify_violation(v) }
   end
 
-  def hashify_violation(v)
+  def hashify_violation(violation)
     {
-      type: v.type,
-      to_package_name: v.to_package_name,
-      class_name: v.to_package_name,
-      files: v.files
+      type: violation.type,
+      to_package_name: violation.to_package_name,
+      class_name: violation.to_package_name,
+      files: violation.files
     }
   end
 
@@ -33,17 +33,21 @@ RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_pa
       enforce_privacy: package.enforce_privacy,
       metadata: package.metadata,
       dependencies: package.dependencies.sort,
-      package_todo: package_todo.nil? ? {} : {
-        pathname: package_todo.pathname.to_s,
-        violations: hashify_violations(package_todo.violations)
-      }
+      package_todo: if package_todo.nil?
+                      {}
+                    else
+                      {
+                        pathname: package_todo.pathname.to_s,
+                        violations: hashify_violations(package_todo.violations)
+                      }
+                    end
     }
   end
 
   def diff_packages
     Hashdiff.best_diff(
       @hashified_actual,
-      @hashified_expected,
+      @hashified_expected
     )
   end
 
@@ -52,10 +56,10 @@ RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_pa
       "Could not find package with package name #{expected_package.name}. Could only find packages with names: #{@actual_packages.map(&:name)}"
     else
       <<~FAILURE_MESSAGE
-      Expected and actual package #{expected_package.name.inspect} are not equal.
-      Here is the JSONified diff of the packages:
+        Expected and actual package #{expected_package.name.inspect} are not equal.
+        Here is the JSONified diff of the packages:
 
-      #{diff_packages.ai}
+        #{diff_packages.ai}
       FAILURE_MESSAGE
     end
   end

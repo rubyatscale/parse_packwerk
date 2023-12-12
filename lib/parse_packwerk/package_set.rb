@@ -1,7 +1,7 @@
 # typed: strict
 # frozen_string_literal: true
 
-require "pathname"
+require 'pathname'
 require 'bundler'
 
 module ParsePackwerk

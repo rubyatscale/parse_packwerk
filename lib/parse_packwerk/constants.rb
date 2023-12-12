@@ -19,7 +19,7 @@ module ParsePackwerk
     T::Hash[T.untyped, T.untyped]
   end
 
-  DEFAULT_EXCLUDE_GLOBS = T.let(["{bin,node_modules,script,tmp,vendor}/**/*"], T::Array[String])
+  DEFAULT_EXCLUDE_GLOBS = T.let(['{bin,node_modules,script,tmp,vendor}/**/*'], T::Array[String])
   DEFAULT_PACKAGE_PATHS = T.let(['**/'], T::Array[String])
   DEFAULT_PUBLIC_PATH = T.let('app/public', String)
 end
