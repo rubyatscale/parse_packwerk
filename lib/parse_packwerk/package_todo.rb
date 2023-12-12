@@ -9,17 +9,12 @@ module ParsePackwerk
 
     sig { params(package: Package).returns(PackageTodo) }
     def self.for(package)
-      PackageTodo.from(self.yml(package.directory))
+      PackageTodo.from(yml(package.directory))
     end
 
     sig { params(pathname: Pathname).returns(PackageTodo) }
     def self.from(pathname)
-      if !pathname.exist?
-        new(
-          pathname: pathname.cleanpath,
-          violations: []
-        )
-      else
+      if pathname.exist?
         package_todo_loaded_yml = YAML.load_file(pathname)
 
         all_violations = []
@@ -39,9 +34,14 @@ module ParsePackwerk
           pathname: pathname.cleanpath,
           violations: all_violations
         )
+      else
+        new(
+          pathname: pathname.cleanpath,
+          violations: []
+        )
       end
     end
-    
+
     sig { params(dirname: Pathname).returns(Pathname) }
     def self.yml(dirname)
       dirname.join(PACKAGE_TODO_YML_NAME).cleanpath

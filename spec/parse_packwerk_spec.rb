@@ -10,7 +10,7 @@ RSpec.describe ParsePackwerk do
     write_file('packwerk.yml', <<~YML)
       require:
         - packwerk-extensions
-      YML
+    YML
   end
 
   subject(:all_packages) do
@@ -28,20 +28,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -56,7 +56,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -77,7 +77,7 @@ RSpec.describe ParsePackwerk do
 
     context 'in app that enforces privacy and dependencies' do
       before do
-        write_file('packs/package_1/package.yml', <<~CONTENTS)
+        write_file('packs/package1/package.yml', <<~CONTENTS)
           enforce_dependencies: true
           enforce_privacy: true
         CONTENTS
@@ -86,20 +86,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -114,7 +114,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -126,26 +126,26 @@ RSpec.describe ParsePackwerk do
 
       let(:expected_domain_package) do
         ParsePackwerk::Package.new(
-          name: 'packs/package_1',
+          name: 'packs/package1',
           enforce_dependencies: true,
           enforce_privacy: true,
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
       let(:expected_domain_package_package_todo) do
-        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package_1/package_todo.yml'))
+        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package1/package_todo.yml'))
       end
 
       it 'correctly finds the package YML' do
-        expect(expected_domain_package.yml).to eq Pathname.new('packs/package_1/package.yml')
+        expect(expected_domain_package.yml).to eq Pathname.new('packs/package1/package.yml')
       end
 
       it 'correctly finds the package directory' do
-        expect(expected_domain_package.directory).to eq Pathname.new('packs/package_1')
+        expect(expected_domain_package.directory).to eq Pathname.new('packs/package1')
       end
 
       it { is_expected.to have_matching_package expected_domain_package, expected_domain_package_package_todo }
@@ -153,7 +153,7 @@ RSpec.describe ParsePackwerk do
 
     context 'in app that has public_path' do
       before do
-        write_file('packs/package_1/package.yml', <<~CONTENTS)
+        write_file('packs/package1/package.yml', <<~CONTENTS)
           enforce_dependencies: true
           enforce_privacy: true
           public_path: other/path
@@ -163,20 +163,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -192,7 +192,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -204,19 +204,19 @@ RSpec.describe ParsePackwerk do
 
       let(:expected_domain_package) do
         ParsePackwerk::Package.new(
-          name: 'packs/package_1',
+          name: 'packs/package1',
           enforce_dependencies: true,
           enforce_privacy: true,
           public_path: 'other/path',
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
       let(:expected_package_todo) do
-        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package_1/package_todo.yml'))
+        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package1/package_todo.yml'))
       end
 
       it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
@@ -224,7 +224,7 @@ RSpec.describe ParsePackwerk do
 
     context 'in app that has metadata' do
       before do
-        write_file('packs/package_1/package.yml', <<~CONTENTS)
+        write_file('packs/package1/package.yml', <<~CONTENTS)
           enforce_dependencies: true
           enforce_privacy: true
           metadata:
@@ -238,20 +238,20 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: false
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
@@ -266,7 +266,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -278,7 +278,7 @@ RSpec.describe ParsePackwerk do
 
       let(:expected_domain_package) do
         ParsePackwerk::Package.new(
-          name: 'packs/package_1',
+          name: 'packs/package1',
           enforce_dependencies: true,
           enforce_privacy: true,
           dependencies: [],
@@ -286,15 +286,15 @@ RSpec.describe ParsePackwerk do
             'string_key' => 'this_is_a_string',
             'obviously_a_boolean_key' => false,
             'not_obviously_a_boolean_key' => false,
-            'numeric_key' => 123,
+            'numeric_key' => 123
           },
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
       let(:expected_package_todo) do
-        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package_1/package_todo.yml'))
+        ParsePackwerk::PackageTodo.from(Pathname.new('packs/package1/package_todo.yml'))
       end
 
       it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
@@ -302,7 +302,7 @@ RSpec.describe ParsePackwerk do
 
     context 'in app that has violations' do
       before do
-        write_file('packs/package_2/package_todo.yml', <<~CONTENTS)
+        write_file('packs/package2/package_todo.yml', <<~CONTENTS)
           # This file contains a list of dependencies that are not part of the long term plan for ..
           # We should generally work to reduce this list, but not at the expense of actually getting work done.
           #
@@ -310,12 +310,12 @@ RSpec.describe ParsePackwerk do
           #
           # bundle exec packwerk update-deprecations .
           ---
-          packs/package_1:
+          packs/package1:
             "SomeConstant":
               violations:
               - dependency
               files:
-              - packs/package_1/lib/some_file.rb
+              - packs/package1/lib/some_file.rb
           '.':
             "SomeRootConstant":
               violations:
@@ -329,12 +329,12 @@ RSpec.describe ParsePackwerk do
               - root_file.rb
         CONTENTS
 
-        write_file('packs/package_2/package.yml', <<~CONTENTS)
+        write_file('packs/package2/package.yml', <<~CONTENTS)
           enforce_dependencies: true
           enforce_privacy: true
         CONTENTS
 
-        write_file('packs/package_1/package_todo.yml', <<~CONTENTS)
+        write_file('packs/package1/package_todo.yml', <<~CONTENTS)
           # This file contains a list of dependencies that are not part of the long term plan for ..
           # We should generally work to reduce this list, but not at the expense of actually getting work done.
           #
@@ -342,19 +342,19 @@ RSpec.describe ParsePackwerk do
           #
           # bundle exec packwerk update-deprecations .
           ---
-          packs/package_2:
+          packs/package2:
             "SomePrivateConstant":
               violations:
               - privacy
               files:
-              - packs/package_2/lib/some_other_file.rb
+              - packs/package2/lib/some_other_file.rb
         CONTENTS
 
-        write_file('packs/package_1/package.yml', <<~CONTENTS)
+        write_file('packs/package1/package.yml', <<~CONTENTS)
           enforce_dependencies: true
           enforce_privacy: true
           dependencies:
-            - packs/package_2
+            - packs/package2
         CONTENTS
 
         write_file('package_todo.yml', <<~CONTENTS)
@@ -365,13 +365,13 @@ RSpec.describe ParsePackwerk do
           #
           # bundle exec packwerk update-deprecations .
           ---
-          packs/package_1:
+          packs/package1:
             "SomeConstant":
               violations:
               - dependency
               files:
               - some_file.rb
-          packs/package_2:
+          packs/package2:
             "SomePrivateConstant":
               violations:
               - privacy
@@ -385,24 +385,24 @@ RSpec.describe ParsePackwerk do
           # This file represents the root package of the application
           # Please validate the configuration using `bin/packwerk validate` (for Rails applications) or running the auto generated
           # test case (for non-Rails projects). You can then use `packwerk check` to check your code.
-          
+
           # Turn on dependency checks for this package
           enforce_dependencies: true
-          
+
           # Turn on privacy checks for this package
           # enforcing privacy is often not useful for the root package, because it would require defining a public interface
           # for something that should only be a thin wrapper in the first place.
           # We recommend enabling this for any new packages you create to aid with encapsulation.
           enforce_privacy: false
-          
+
           # By default the public path will be app/public/, however this may not suit all applications' architecture so
           # this allows you to modify what your package's public path is.
           # public_path: app/public/
-          
+
           # A list of this package's dependencies
           # Note that packages in this list require their own `package.yml` file
           dependencies:
-            - packs/package_2
+            - packs/package2
         CONTENTS
       end
 
@@ -411,10 +411,10 @@ RSpec.describe ParsePackwerk do
           name: '.',
           enforce_dependencies: true,
           enforce_privacy: false,
-          dependencies: ['packs/package_2'],
+          dependencies: ['packs/package2'],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -424,71 +424,71 @@ RSpec.describe ParsePackwerk do
           violations: [
             ParsePackwerk::Violation.new(
               type: 'dependency',
-              to_package_name: 'packs/package_1',
+              to_package_name: 'packs/package1',
               class_name: 'SomeConstant',
               files: ['some_file.rb']
             ),
             ParsePackwerk::Violation.new(
               type: 'privacy',
-              to_package_name: 'packs/package_2',
+              to_package_name: 'packs/package2',
               class_name: 'SomePrivateConstant',
               files: ['some_other_file.rb', 'path/to/file.rb', 'extended/path/to/file.rb']
-            ),
-          ],
+            )
+          ]
         )
       end
 
       it { is_expected.to have_matching_package expected_root_package, expected_package_todo }
 
-      let(:expected_domain_package_1) do
+      let(:expected_domain_package1) do
         ParsePackwerk::Package.new(
-          name: 'packs/package_1',
+          name: 'packs/package1',
           enforce_dependencies: true,
           enforce_privacy: true,
-          dependencies: ['packs/package_2'],
+          dependencies: ['packs/package2'],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
-      let(:expected_package_todo_1) do
+      let(:expected_package_todo1) do
         ParsePackwerk::PackageTodo.new(
-          pathname: Pathname.new('packs/package_1/package_todo.yml'),
+          pathname: Pathname.new('packs/package1/package_todo.yml'),
           violations: [
             ParsePackwerk::Violation.new(
               type: 'privacy',
-              to_package_name: 'packs/package_2',
+              to_package_name: 'packs/package2',
               class_name: 'SomePrivateConstant',
-              files: ['packs/package_2/lib/some_other_file.rb']
-            ),
-          ],
+              files: ['packs/package2/lib/some_other_file.rb']
+            )
+          ]
         )
       end
 
-      it { is_expected.to have_matching_package expected_domain_package_1, expected_package_todo_1 }
+      it { is_expected.to have_matching_package expected_domain_package1, expected_package_todo1 }
 
-      let(:expected_domain_package_2) do
+      let(:expected_domain_package2) do
         ParsePackwerk::Package.new(
-          name: 'packs/package_2',
+          name: 'packs/package2',
           enforce_dependencies: true,
           enforce_privacy: true,
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
-      let(:expected_domain_package_package_todo_2) do
+      let(:expected_domain_package_package_todo2) do
         ParsePackwerk::PackageTodo.new(
-          pathname: Pathname.new('packs/package_2/package_todo.yml'),
+          pathname: Pathname.new('packs/package2/package_todo.yml'),
           violations: [
             ParsePackwerk::Violation.new(
               type: 'dependency',
-              to_package_name: 'packs/package_1',
+              to_package_name: 'packs/package1',
               class_name: 'SomeConstant',
-              files: ['packs/package_1/lib/some_file.rb']
+              files: ['packs/package1/lib/some_file.rb']
             ),
             ParsePackwerk::Violation.new(
               type: 'dependency',
@@ -501,12 +501,12 @@ RSpec.describe ParsePackwerk do
               to_package_name: '.',
               class_name: 'SomeOtherRootConstant',
               files: ['root_file.rb']
-            ),
-          ],
+            )
+          ]
         )
       end
 
-      it { is_expected.to have_matching_package expected_domain_package_2, expected_domain_package_package_todo_2 }
+      it { is_expected.to have_matching_package expected_domain_package2, expected_domain_package_package_todo2 }
     end
 
     context 'in an app that has specified package paths' do
@@ -535,8 +535,8 @@ RSpec.describe ParsePackwerk do
 
         it 'includes the correct set of packages' do
           expect(all_packages.count).to eq 2
-          expect(all_packages.find{|p| p.name == '.'}).to_not be_nil
-          expect(all_packages.find{|p| p.name == 'packs/my_pack'}).to_not be_nil
+          expect(all_packages.find { |p| p.name == '.' }).to_not be_nil
+          expect(all_packages.find { |p| p.name == 'packs/my_pack' }).to_not be_nil
         end
       end
 
@@ -572,8 +572,8 @@ RSpec.describe ParsePackwerk do
 
         it 'includes the correct set of packages' do
           expect(all_packages.count).to eq 2
-          expect(all_packages.find{|p| p.name == '.'}).to_not be_nil
-          expect(all_packages.find{|p| p.name == 'packs/my_pack'}).to_not be_nil
+          expect(all_packages.find { |p| p.name == '.' }).to_not be_nil
+          expect(all_packages.find { |p| p.name == 'packs/my_pack' }).to_not be_nil
         end
       end
     end
@@ -593,8 +593,8 @@ RSpec.describe ParsePackwerk do
 
       it 'includes the correct set of packages' do
         expect(all_packages.count).to eq 2
-        expect(all_packages.find{|p| p.name == '.'}).to_not be_nil
-        expect(all_packages.find{|p| p.name == 'packs/my_pack'}).to_not be_nil
+        expect(all_packages.find { |p| p.name == '.' }).to_not be_nil
+        expect(all_packages.find { |p| p.name == 'packs/my_pack' }).to_not be_nil
       end
     end
 
@@ -618,9 +618,9 @@ RSpec.describe ParsePackwerk do
 
       it 'includes the correct set of packages' do
         expect(all_packages.count).to eq 3
-        expect(all_packages.find{|p| p.name == '.'}).to_not be_nil
-        expect(all_packages.find{|p| p.name == 'packs/my_pack'}).to_not be_nil
-        expect(all_packages.find{|p| p.name == 'packs/my_pack/subpack'}).to_not be_nil
+        expect(all_packages.find { |p| p.name == '.' }).to_not be_nil
+        expect(all_packages.find { |p| p.name == 'packs/my_pack' }).to_not be_nil
+        expect(all_packages.find { |p| p.name == 'packs/my_pack/subpack' }).to_not be_nil
       end
     end
 
@@ -639,7 +639,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -660,12 +660,11 @@ RSpec.describe ParsePackwerk do
 
     context 'in app with an invalid package.yml' do
       before do
-        write_file('packs/my_pack/package.yml', <<~CONTENTS)
-        CONTENTS
+        write_file('packs/my_pack/package.yml', '')
       end
 
       it 'outputs an error message with the pathname' do
-        expect{subject}.to raise_error(ParsePackwerk::PackageParseError, /Failed to parse `packs\/my_pack\/package.yml`. Please fix any issues with this package.yml OR add its containing folder to packwerk.yml `exclude`/)
+        expect { subject }.to raise_error(ParsePackwerk::PackageParseError, %r{Failed to parse `packs/my_pack/package.yml`. Please fix any issues with this package.yml OR add its containing folder to packwerk.yml `exclude`})
       end
     end
   end
@@ -714,7 +713,7 @@ RSpec.describe ParsePackwerk do
       end
 
       it 'has violations' do
-        expected_violation = ParsePackwerk::Violation.new(class_name: "SomeRootConstant", files: ["packs/my_pack/my_file.rb"], to_package_name: ".", type: "dependency")
+        expected_violation = ParsePackwerk::Violation.new(class_name: 'SomeRootConstant', files: ['packs/my_pack/my_file.rb'], to_package_name: '.', type: 'dependency')
         actual_violations = ParsePackwerk.find('packs/my_pack').violations
         expect(actual_violations.count).to eq 1
         expect(actual_violations.first.class_name).to eq expected_violation.class_name
@@ -732,7 +731,7 @@ RSpec.describe ParsePackwerk do
       subject { configuration.exclude }
 
       context 'when the configuration file is not present' do
-        it { is_expected.to contain_exactly(Bundler.bundle_path.join("**").to_s, "{bin,node_modules,script,tmp,vendor}/**/*") }
+        it { is_expected.to contain_exactly(Bundler.bundle_path.join('**').to_s, '{bin,node_modules,script,tmp,vendor}/**/*') }
       end
 
       context 'configuration is present' do
@@ -743,7 +742,7 @@ RSpec.describe ParsePackwerk do
           CONTENTS
         end
 
-        it { is_expected.to contain_exactly(Bundler.bundle_path.join("**").to_s, 'a/b/**/c.rb') }
+        it { is_expected.to contain_exactly(Bundler.bundle_path.join('**').to_s, 'a/b/**/c.rb') }
       end
 
       context 'when the exclude option is not defined' do
@@ -753,7 +752,7 @@ RSpec.describe ParsePackwerk do
           CONTENTS
         end
 
-        it { is_expected.to contain_exactly(Bundler.bundle_path.join("**").to_s, "{bin,node_modules,script,tmp,vendor}/**/*") }
+        it { is_expected.to contain_exactly(Bundler.bundle_path.join('**').to_s, '{bin,node_modules,script,tmp,vendor}/**/*') }
       end
 
       context 'when the exclude option is a string and not a list of strings' do
@@ -762,7 +761,7 @@ RSpec.describe ParsePackwerk do
             exclude: 'a/b/**/c.rb'
           CONTENTS
         end
-        it { is_expected.to contain_exactly(Bundler.bundle_path.join("**").to_s, 'a/b/**/c.rb') }
+        it { is_expected.to contain_exactly(Bundler.bundle_path.join('**').to_s, 'a/b/**/c.rb') }
       end
     end
 
@@ -770,7 +769,7 @@ RSpec.describe ParsePackwerk do
       subject { configuration.package_paths }
 
       context 'when the configuration file is not present' do
-        it { is_expected.to contain_exactly("**/", '.') }
+        it { is_expected.to contain_exactly('**/', '.') }
       end
 
       context 'configuration is present' do
@@ -791,7 +790,7 @@ RSpec.describe ParsePackwerk do
           CONTENTS
         end
 
-        it { is_expected.to contain_exactly("**/", '.') }
+        it { is_expected.to contain_exactly('**/', '.') }
       end
 
       context 'when the package paths option is a string and not a list of strings' do
@@ -807,12 +806,12 @@ RSpec.describe ParsePackwerk do
 
   describe 'ParsePackwerk.package_from_path' do
     before do
-      write_file('packs/package_1/package.yml', <<~CONTENTS)
+      write_file('packs/package1/package.yml', <<~CONTENTS)
         enforce_dependencies: true
         enforce_privacy: true
       CONTENTS
 
-      write_file('packs/package_1_new/package.yml', <<~CONTENTS)
+      write_file('packs/package1_new/package.yml', <<~CONTENTS)
         enforce_dependencies: true
         enforce_privacy: false
       CONTENTS
@@ -823,69 +822,69 @@ RSpec.describe ParsePackwerk do
       CONTENTS
     end
 
-    let(:expected_package_1) do
+    let(:expected_package1) do
       ParsePackwerk::Package.new(
-        name: 'packs/package_1',
+        name: 'packs/package1',
         enforce_dependencies: true,
         enforce_privacy: true,
         dependencies: [],
         metadata: {},
         config: {},
-        violations: [],
+        violations: []
       )
     end
 
-    let(:expected_package_1_new) do
+    let(:expected_package1_new) do
       ParsePackwerk::Package.new(
-        name: 'packs/package_1_new',
+        name: 'packs/package1_new',
         enforce_dependencies: true,
         enforce_privacy: false,
         dependencies: [],
         metadata: {},
         config: {},
-        violations: [],
+        violations: []
       )
     end
 
-    context 'given a filepath in pack_1' do
-      let(:filepath) { 'packs/package_1/path/to/file.rb' }
+    context 'given a filepath in pack1' do
+      let(:filepath) { 'packs/package1/path/to/file.rb' }
 
       it 'returns the correct package' do
         package = ParsePackwerk.package_from_path(filepath)
 
         expect(package).to have_attributes({
-          name: expected_package_1.name,
-          enforce_dependencies: expected_package_1.enforce_dependencies,
-          enforce_privacy: expected_package_1.enforce_privacy,
-        })
+                                             name: expected_package1.name,
+                                             enforce_dependencies: expected_package1.enforce_dependencies,
+                                             enforce_privacy: expected_package1.enforce_privacy
+                                           })
       end
     end
 
-    context 'given a file path in pack_1_new' do
-      let(:filepath) { 'packs/package_1_new/path/to/file.rb' }
+    context 'given a file path in pack1_new' do
+      let(:filepath) { 'packs/package1_new/path/to/file.rb' }
 
       it 'returns the correct package' do
         package = ParsePackwerk.package_from_path(filepath)
 
         expect(package).to have_attributes({
-          name: expected_package_1_new.name,
-          enforce_dependencies: expected_package_1_new.enforce_dependencies,
-          enforce_privacy: expected_package_1_new.enforce_privacy,
-        })
+                                             name: expected_package1_new.name,
+                                             enforce_dependencies: expected_package1_new.enforce_dependencies,
+                                             enforce_privacy: expected_package1_new.enforce_privacy
+                                           })
       end
     end
 
     context 'given a file path that is exactly the root of a pack' do
-      let(:filepath) { 'packs/package_1' }
+      let(:filepath) { 'packs/package1' }
 
       it 'returns the correct pack' do
         package = ParsePackwerk.package_from_path(filepath)
 
         expect(package).to have_attributes({
-          name: expected_package_1.name,
-          enforce_dependencies: expected_package_1.enforce_dependencies,
-          enforce_privacy: expected_package_1.enforce_privacy,
-        })
+                                             name: expected_package1.name,
+                                             enforce_dependencies: expected_package1.enforce_dependencies,
+                                             enforce_privacy: expected_package1.enforce_privacy
+                                           })
       end
     end
 
@@ -900,7 +899,7 @@ RSpec.describe ParsePackwerk do
           dependencies: [],
           metadata: {},
           config: {},
-          violations: [],
+          violations: []
         )
       end
 
@@ -908,10 +907,10 @@ RSpec.describe ParsePackwerk do
         package = ParsePackwerk.package_from_path(filepath)
 
         expect(package).to have_attributes({
-          name: expected_root_package.name,
-          enforce_dependencies: expected_root_package.enforce_dependencies,
-          enforce_privacy: expected_root_package.enforce_privacy,
-        })
+                                             name: expected_root_package.name,
+                                             enforce_dependencies: expected_root_package.enforce_dependencies,
+                                             enforce_privacy: expected_root_package.enforce_privacy
+                                           })
       end
     end
 
@@ -958,7 +957,7 @@ RSpec.describe ParsePackwerk do
         dependencies: dependencies,
         metadata: metadata,
         config: config,
-        violations: [],
+        violations: []
       )
     end
 
@@ -968,7 +967,7 @@ RSpec.describe ParsePackwerk do
         enforce_dependencies: package.enforce_dependencies,
         enforce_privacy: package.enforce_privacy,
         dependencies: package.dependencies,
-        metadata: package.metadata,
+        metadata: package.metadata
       }
     end
 
@@ -1024,7 +1023,7 @@ RSpec.describe ParsePackwerk do
 
     context 'package with dependencies' do
       let(:package) do
-        build_pack(dependencies: ['my_other_pack1', 'my_other_pack2'])
+        build_pack(dependencies: %w[my_other_pack1 my_other_pack2])
       end
 
       it 'writes the right package' do
@@ -1045,9 +1044,9 @@ RSpec.describe ParsePackwerk do
     context 'package with metadata' do
       let(:package) do
         build_pack(metadata: {
-          'owner' => 'Mission > Team',
-          'protections' => { 'prevent_untyped_api' => 'fail_if_any', 'prevent_violations' => false },
-        })
+                     'owner' => 'Mission > Team',
+                     'protections' => { 'prevent_untyped_api' => 'fail_if_any', 'prevent_violations' => false }
+                   })
       end
 
       it 'writes the right package' do
@@ -1074,7 +1073,7 @@ RSpec.describe ParsePackwerk do
             enforce_privacy: true
             public_path: other/path
             dependencies:
-            - packs/package_2
+            - packs/package2
           CONTENTS
         end
 
@@ -1099,9 +1098,9 @@ RSpec.describe ParsePackwerk do
     context 'package with other top-level config' do
       let(:package) do
         build_pack(config: {
-          'my_special_key' => { 'blah' => 1 },
-          'my_other_special_key' => true
-        })
+                     'my_special_key' => { 'blah' => 1 },
+                     'my_other_special_key' => true
+                   })
       end
 
       it 'writes the right package' do

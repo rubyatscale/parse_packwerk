@@ -1,5 +1,5 @@
 Gem::Specification.new do |spec|
-  spec.name          = "parse_packwerk"
+  spec.name          = 'parse_packwerk'
   spec.version       = '0.20.1'
   spec.authors       = ['Gusto Engineers']
   spec.email         = ['dev@gusto.com']
@@ -25,12 +25,13 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'sorbet-runtime'
 
+  spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'bundler', '~> 2.2'
+  spec.add_development_dependency 'hashdiff'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'sorbet'
   spec.add_development_dependency 'tapioca'
-  spec.add_development_dependency 'hashdiff'
-  spec.add_development_dependency 'awesome_print'
 end

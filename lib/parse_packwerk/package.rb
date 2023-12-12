@@ -18,7 +18,7 @@ module ParsePackwerk
       package_loaded_yml = YAML.load_file(pathname)
       if package_loaded_yml.nil? || package_loaded_yml == false
         message = "Failed to parse `#{pathname}`. Please fix any issues with this package.yml OR add its containing folder to packwerk.yml `exclude`"
-        raise PackageParseError.new(message)
+        raise PackageParseError, message
       end
       package_name = pathname.dirname.cleanpath.to_s
 
@@ -46,7 +46,7 @@ module ParsePackwerk
 
     sig { returns(Pathname) }
     def directory
-      self.class.directory(self.name)
+      self.class.directory(name)
     end
 
     sig { returns(Pathname) }
