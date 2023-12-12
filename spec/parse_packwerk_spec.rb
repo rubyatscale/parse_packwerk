@@ -222,6 +222,25 @@ RSpec.describe ParsePackwerk do
       it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
     end
 
+    context 'package does not declare enforce_dependencies' do
+      before do
+        write_file('package.yml', <<~CONTENTS)
+
+          # A list of this package's dependencies
+          # Note that packages in this list require their own `package.yml` file
+          dependencies:
+        CONTENTS
+      end
+
+      let(:valid_package) {
+        ParsePackwerk::Package.from(Pathname.new('package.yml'))
+      }
+
+      it 'should be valid' do
+        expect { valid_package }.to_not raise_error
+      end
+    end
+
     context 'in app that has metadata' do
       before do
         write_file('packs/package1/package.yml', <<~CONTENTS)

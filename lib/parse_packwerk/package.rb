@@ -5,7 +5,7 @@ module ParsePackwerk
     extend T::Sig
 
     const :name, String
-    const :enforce_dependencies, T.any(T::Boolean, String)
+    const :enforce_dependencies, T.nilable(T.any(T::Boolean, String))
     const :enforce_privacy, T.any(T::Boolean, String), default: false
     const :public_path, String, default: DEFAULT_PUBLIC_PATH
     const :metadata, MetadataYmlType
