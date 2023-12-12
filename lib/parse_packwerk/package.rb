@@ -54,7 +54,7 @@ module ParsePackwerk
       directory.join(public_path).cleanpath
     end
 
-    sig { returns(T.any(T::Boolean, String)) }
+    sig { returns(T.nilable(T.any(T::Boolean, String))) }
     def enforces_dependencies?
       enforce_dependencies
     end
