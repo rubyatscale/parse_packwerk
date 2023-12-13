@@ -13,6 +13,11 @@ module ParsePackwerk
     def self.privacy_extension_installed?
       all_extensions_installed? || ParsePackwerk.yml.requires.include?('packwerk/privacy/checker')
     end
+
+    sig { returns(T::Boolean) }
+    def self.architecture_extension_installed?
+      all_extensions_installed? || ParsePackwerk.yml.requires.include?('packwerk/architecture/checker')
+    end
   end
 
   private_constant :Extensions
