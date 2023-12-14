@@ -72,6 +72,10 @@ module ParsePackwerk
         merged_config.merge!('enforce_privacy' => package.enforce_privacy)
       end
 
+      if Extensions.architecture_extension_installed?
+        merged_config.merge!('enforce_architecture' => package.enforce_architecture)
+      end
+
       unless package.public_path == DEFAULT_PUBLIC_PATH
         merged_config.merge!('public_path' => package.public_path)
       end
