@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    parse_packwerk (0.22.0)
+    parse_packwerk (0.23.0)
       bigdecimal
       sorbet-runtime
 

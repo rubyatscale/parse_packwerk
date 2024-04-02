@@ -677,13 +677,29 @@ RSpec.describe ParsePackwerk do
       it { is_expected.to have_matching_package expected_package, expected_package_todo }
     end
 
-    context 'in app with an invalid package.yml' do
+    context 'in app with an empty package.yml' do
+      let(:expected_package) do
+        ParsePackwerk::Package.new(
+          name: 'packs/my_pack',
+          enforce_dependencies: nil,
+          enforce_privacy: false,
+          dependencies: [],
+          metadata: {},
+          config: {},
+          violations: []
+        )
+      end
+
+      let(:expected_package_todo) do
+        ParsePackwerk::PackageTodo.for(expected_package)
+      end
+
       before do
         write_file('packs/my_pack/package.yml', '')
       end
 
-      it 'outputs an error message with the pathname' do
-        expect { subject }.to raise_error(ParsePackwerk::PackageParseError, %r{Failed to parse `packs/my_pack/package.yml`. Please fix any issues with this package.yml OR add its containing folder to packwerk.yml `exclude`})
+      it 'parses the file and returns a package with empty values' do
+        expect(subject).to have_matching_package(expected_package, expected_package_todo)
       end
     end
   end
