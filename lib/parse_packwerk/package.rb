@@ -7,7 +7,7 @@ module ParsePackwerk
     const :name, String
     const :enforce_dependencies, T.nilable(T.any(T::Boolean, String))
     const :enforce_privacy, T.any(T::Boolean, String), default: false
-    const :enforce_layer, T.any(T::Boolean, String), default: false
+    const :enforce_layers, T.any(T::Boolean, String), default: false
     const :public_path, String, default: DEFAULT_PUBLIC_PATH
     const :metadata, MetadataYmlType
     const :dependencies, T::Array[String]
@@ -23,7 +23,7 @@ module ParsePackwerk
         name: package_name,
         enforce_dependencies: package_loaded_yml[ENFORCE_DEPENDENCIES],
         enforce_privacy: package_loaded_yml[ENFORCE_PRIVACY] || false,
-        enforce_layer: package_loaded_yml[ENFORCE_LAYER] || false,
+        enforce_layers: package_loaded_yml[ENFORCE_LAYERS] || false,
         public_path: package_loaded_yml[PUBLIC_PATH] || DEFAULT_PUBLIC_PATH,
         metadata: package_loaded_yml[METADATA] || {},
         dependencies: package_loaded_yml[DEPENDENCIES] || [],
@@ -63,8 +63,8 @@ module ParsePackwerk
     end
 
     sig { returns(T.any(T::Boolean, String)) }
-    def enforces_layer?
-      enforce_layer
+    def enforces_layers?
+      enforce_layers
     end
   end
 end

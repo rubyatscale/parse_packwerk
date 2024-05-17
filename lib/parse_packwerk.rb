@@ -73,7 +73,7 @@ module ParsePackwerk
       end
 
       if Extensions.layer_extension_installed?
-        merged_config.merge!('enforce_layer' => package.enforce_layer)
+        merged_config.merge!('enforce_layers' => package.enforce_layers)
       end
 
       unless package.public_path == DEFAULT_PUBLIC_PATH
@@ -107,7 +107,7 @@ module ParsePackwerk
       enforce_dependencies
       enforce_privacy
       enforce_visibility
-      enforce_layer
+      enforce_layers
       public_path
       owner
       layer
