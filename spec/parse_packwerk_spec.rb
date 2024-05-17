@@ -983,12 +983,12 @@ RSpec.describe ParsePackwerk do
     let(:package_yml) { package_dir.join('package.yml') }
     let(:package_todo_yml) { package_dir.join('package_todo.yml') }
 
-    def build_pack(public_path: 'app/public', enforce_privacy: true, enforce_layer: true, dependencies: [], metadata: {}, config: {})
+    def build_pack(public_path: 'app/public', enforce_privacy: true, enforce_layers: true, dependencies: [], metadata: {}, config: {})
       ParsePackwerk::Package.new(
         name: package_dir.to_s,
         enforce_dependencies: true,
         enforce_privacy: enforce_privacy,
-        enforce_layer: enforce_layer,
+        enforce_layers: enforce_layers,
         public_path: public_path,
         dependencies: dependencies,
         metadata: metadata,
@@ -1002,7 +1002,7 @@ RSpec.describe ParsePackwerk do
         name: package.name,
         enforce_dependencies: package.enforce_dependencies,
         enforce_privacy: package.enforce_privacy,
-        enforce_layer: package.enforce_layer,
+        enforce_layers: package.enforce_layers,
         dependencies: package.dependencies,
         metadata: package.metadata
       }
@@ -1016,7 +1016,7 @@ RSpec.describe ParsePackwerk do
         expect(package_yml.read).to eq <<~PACKAGEYML
           enforce_dependencies: true
           enforce_privacy: true
-          enforce_layer: true
+          enforce_layers: true
         PACKAGEYML
 
         expect(all_packages.count).to eq 1
@@ -1034,7 +1034,7 @@ RSpec.describe ParsePackwerk do
         expect(package_yml.read).to eq <<~PACKAGEYML
           enforce_dependencies: true
           enforce_privacy: true
-          enforce_layer: true
+          enforce_layers: true
           public_path: other/path
         PACKAGEYML
 
@@ -1053,7 +1053,7 @@ RSpec.describe ParsePackwerk do
         expect(package_yml.read).to eq <<~PACKAGEYML
           enforce_dependencies: true
           enforce_privacy: strict
-          enforce_layer: true
+          enforce_layers: true
         PACKAGEYML
 
         expect(all_packages.count).to eq 1
@@ -1071,7 +1071,7 @@ RSpec.describe ParsePackwerk do
         expect(package_yml.read).to eq <<~PACKAGEYML
           enforce_dependencies: true
           enforce_privacy: true
-          enforce_layer: true
+          enforce_layers: true
           dependencies:
             - my_other_pack1
             - my_other_pack2
@@ -1096,7 +1096,7 @@ RSpec.describe ParsePackwerk do
         expect(package_yml.read).to eq <<~PACKAGEYML
           enforce_dependencies: true
           enforce_privacy: true
-          enforce_layer: true
+          enforce_layers: true
           metadata:
             owner: Mission > Team
             protections:
@@ -1113,7 +1113,7 @@ RSpec.describe ParsePackwerk do
           write_file(package_yml, <<~CONTENTS)
             enforce_dependencies: true
             enforce_privacy: true
-            enforce_layer: true
+            enforce_layers: true
             public_path: other/path
             dependencies:
             - packs/package2
@@ -1132,7 +1132,7 @@ RSpec.describe ParsePackwerk do
           expect(package_yml.read).to eq <<~PACKAGEYML
             enforce_dependencies: true
             enforce_privacy: true
-            enforce_layer: true
+            enforce_layers: true
             public_path: other/path
           PACKAGEYML
         end
@@ -1153,7 +1153,7 @@ RSpec.describe ParsePackwerk do
         expect(package_yml.read).to eq <<~PACKAGEYML
           enforce_dependencies: true
           enforce_privacy: true
-          enforce_layer: true
+          enforce_layers: true
           my_special_key:
             blah: 1
           my_other_special_key: true
@@ -1169,7 +1169,7 @@ RSpec.describe ParsePackwerk do
         write_file('packwerk.yml', '{}')
       end
 
-      let(:package) { build_pack(enforce_privacy: false, enforce_layer: false) }
+      let(:package) { build_pack(enforce_privacy: false, enforce_layers: false) }
 
       it 'writes the right package' do
         ParsePackwerk.write_package_yml!(package)
