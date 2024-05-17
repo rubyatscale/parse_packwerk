@@ -15,8 +15,8 @@ module ParsePackwerk
     end
 
     sig { returns(T::Boolean) }
-    def self.architecture_extension_installed?
-      all_extensions_installed? || ParsePackwerk.yml.requires.include?('packwerk/architecture/checker')
+    def self.layer_extension_installed?
+      all_extensions_installed? || ParsePackwerk.yml.requires.include?('packwerk/layer/checker')
     end
   end
 
