@@ -1073,8 +1073,8 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true
           enforce_layers: true
           dependencies:
-            - my_other_pack1
-            - my_other_pack2
+          - my_other_pack1
+          - my_other_pack2
         PACKAGEYML
 
         expect(all_packages.count).to eq 1
