@@ -94,8 +94,6 @@ module ParsePackwerk
       merged_config = merged_config.to_a.sort_by { |key, _value| T.unsafe(sorted_keys).index(key) || 1000 }.to_h
 
       raw_yaml = YAML.dump(merged_config)
-      # Add indentation for dependencies
-      raw_yaml.gsub!(/^- /, '  - ')
       stylized_yaml = raw_yaml.gsub("---\n", '')
       file.write(stylized_yaml)
     end

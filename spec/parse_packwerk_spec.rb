@@ -1008,6 +1008,26 @@ RSpec.describe ParsePackwerk do
       }
     end
 
+    it 'does not generate invalid yaml for configs using enforcement_globs_ignore' do
+      path = Pathname.new('packs/my_pack/package.yml')
+
+      write_file path, <<~CONTENTS
+        enforce_dependencies: false
+        enforce_privacy: false
+        enforcement_globs_ignore:
+        - enforcements:
+          - privacy
+          ignores:
+          - "**/*"
+      CONTENTS
+
+      package = ParsePackwerk::Package.from(path)
+
+      ParsePackwerk.write_package_yml!(package)
+
+      expect { YAML.load_file(path) }.not_to raise_error
+    end
+
     context 'a simple package' do
       let(:package) { build_pack }
 
@@ -1073,8 +1093,8 @@ RSpec.describe ParsePackwerk do
           enforce_privacy: true
           enforce_layers: true
           dependencies:
-            - my_other_pack1
-            - my_other_pack2
+          - my_other_pack1
+          - my_other_pack2
         PACKAGEYML
 
         expect(all_packages.count).to eq 1
