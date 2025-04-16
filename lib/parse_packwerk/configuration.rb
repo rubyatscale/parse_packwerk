@@ -37,7 +37,13 @@ module ParsePackwerk
                    Array(specified_exclude)
                  end
 
-      excludes.push Bundler.bundle_path.join('**').to_s
+      begin
+        excludes.push Bundler.bundle_path.join('**').to_s
+      rescue Bundler::GemfileNotFound
+        # Not using a Gemfile, so we can't add the bundle path.
+      end
+
+      excludes
     end
 
     sig { params(config_hash: T::Hash[T.untyped, T.untyped]).returns(T::Array[String]) }
