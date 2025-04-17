@@ -40,7 +40,7 @@ module ParsePackwerk
       begin
         excludes.push Bundler.bundle_path.join('**').to_s
       rescue Bundler::GemfileNotFound
-        # Not using a Gemfile, so we can't add the bundle path.
+        # Optionally, add bundle to the path. Skip when there isn't a Gemfile.
       end
 
       excludes
