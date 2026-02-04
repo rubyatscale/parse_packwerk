@@ -1201,5 +1201,166 @@ RSpec.describe ParsePackwerk do
         expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
       end
     end
+
+    describe 'preserve_key_order option' do
+      after do
+        ParsePackwerk.preserve_key_order = false
+      end
+
+      context 'when preserve_key_order is false (default)' do
+        before do
+          ParsePackwerk.preserve_key_order = false
+          write_file(package_yml, <<~CONTENTS)
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/foo
+          CONTENTS
+        end
+
+        it 'reorders keys according to key_sort_order' do
+          package = ParsePackwerk::Package.from(package_yml)
+          ParsePackwerk.write_package_yml!(package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            dependencies:
+            - packs/foo
+          PACKAGEYML
+        end
+      end
+
+      context 'when preserve_key_order is true' do
+        before do
+          ParsePackwerk.preserve_key_order = true
+          write_file(package_yml, <<~CONTENTS)
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/foo
+          CONTENTS
+        end
+
+        it 'preserves the original key order from the file' do
+          package = ParsePackwerk::Package.from(package_yml)
+          ParsePackwerk.write_package_yml!(package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/foo
+          PACKAGEYML
+        end
+
+        it 'appends new keys in canonical order at the end' do
+          package = ParsePackwerk::Package.from(package_yml)
+          # Add metadata which wasn't in the original file
+          new_package = package.with(metadata: { 'owner' => 'Team A' })
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/foo
+            metadata:
+              owner: Team A
+          PACKAGEYML
+        end
+
+        it 'handles removed keys gracefully' do
+          package = ParsePackwerk::Package.from(package_yml)
+          # Remove dependencies
+          new_package = package.with(dependencies: [])
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+          PACKAGEYML
+        end
+      end
+
+      context 'when preserve_key_order is true but package has no original_key_order' do
+        before do
+          ParsePackwerk.preserve_key_order = true
+        end
+
+        it 'falls back to canonical key order for new packages' do
+          package = build_pack(dependencies: ['packs/foo'])
+          ParsePackwerk.write_package_yml!(package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            dependencies:
+            - packs/foo
+          PACKAGEYML
+        end
+      end
+
+      context 'when package is modified after reading' do
+        before do
+          ParsePackwerk.preserve_key_order = true
+          write_file(package_yml, <<~CONTENTS)
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/foo
+          CONTENTS
+        end
+
+        it 'preserves key order even when dependencies change' do
+          package = ParsePackwerk::Package.from(package_yml)
+          # Change dependencies value but keep the key
+          new_package = package.with(dependencies: ['packs/bar', 'packs/baz'])
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/bar
+            - packs/baz
+          PACKAGEYML
+        end
+      end
+
+      context 'preserves original key order when reading and writing package' do
+        before do
+          ParsePackwerk.preserve_key_order = true
+        end
+
+        it 'stores original_key_order when reading package' do
+          write_file(package_yml, <<~CONTENTS)
+            enforce_privacy: true
+            layer: admin
+            enforce_dependencies: true
+          CONTENTS
+
+          package = ParsePackwerk::Package.from(package_yml)
+          expect(package.original_key_order).to eq ['enforce_privacy', 'layer', 'enforce_dependencies']
+        end
+      end
+    end
   end
 end
