@@ -1358,7 +1358,7 @@ RSpec.describe ParsePackwerk do
           CONTENTS
 
           package = ParsePackwerk::Package.from(package_yml)
-          expect(package.original_key_order).to eq ['enforce_privacy', 'layer', 'enforce_dependencies']
+          expect(package.original_key_order).to eq %w[enforce_privacy layer enforce_dependencies]
         end
       end
     end
