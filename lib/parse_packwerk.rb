@@ -31,6 +31,19 @@ module ParsePackwerk
 
   extend T::Sig
 
+  # Configuration option to preserve the original key order when writing package.yml files.
+  # When true, keys will be written in their original order from the file rather than
+  # being sorted according to key_sort_order. This reduces diff churn when tools modify packages.
+  # Defaults to false for backwards compatibility.
+  @preserve_key_order = T.let(false, T::Boolean)
+
+  class << self
+    extend T::Sig
+
+    sig { returns(T::Boolean) }
+    attr_accessor :preserve_key_order
+  end
+
   sig do
     returns(T::Array[Package])
   end
@@ -90,12 +103,28 @@ module ParsePackwerk
         merged_config.merge!('metadata' => package.metadata)
       end
 
-      sorted_keys = key_sort_order
-      merged_config = merged_config.to_a.sort_by { |key, _value| T.unsafe(sorted_keys).index(key) || 1000 }.to_h
+      merged_config = sort_keys(merged_config, package.original_key_order)
 
       raw_yaml = YAML.dump(merged_config)
       stylized_yaml = raw_yaml.gsub("---\n", '')
       file.write(stylized_yaml)
+    end
+  end
+
+  sig { params(config: T::Hash[T.untyped, T.untyped], original_key_order: T::Array[String]).returns(T::Hash[T.untyped, T.untyped]) }
+  def self.sort_keys(config, original_key_order)
+    if preserve_key_order && original_key_order.any?
+      # Preserve original key order: existing keys stay in their original position,
+      # new keys are appended in the default sort order
+      existing_keys = original_key_order & config.keys
+      new_keys = config.keys - original_key_order
+      sorted_new_keys = new_keys.sort_by { |key| key_sort_order.index(key) || 1000 }
+
+      ordered_keys = existing_keys + sorted_new_keys
+      ordered_keys.each_with_object({}) { |key, hash| hash[key] = config[key] if config.key?(key) }
+    else
+      # Default behavior: sort by canonical key order
+      config.to_a.sort_by { |key, _value| T.unsafe(key_sort_order).index(key) || 1000 }.to_h
     end
   end
 

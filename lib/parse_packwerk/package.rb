@@ -13,11 +13,15 @@ module ParsePackwerk
     const :dependencies, T::Array[String]
     const :config, T::Hash[T.untyped, T.untyped]
     const :violations, T::Array[Violation]
+    # Stores the original key order from the YAML file for preserving order on write
+    const :original_key_order, T::Array[String], default: []
 
     sig { params(pathname: Pathname).returns(Package) }
     def self.from(pathname)
       package_loaded_yml = YAML.load_file(pathname) || {}
       package_name = pathname.dirname.cleanpath.to_s
+      # Capture the original key order from the YAML file
+      original_keys = package_loaded_yml.is_a?(Hash) ? package_loaded_yml.keys : []
 
       new(
         name: package_name,
@@ -28,7 +32,8 @@ module ParsePackwerk
         metadata: package_loaded_yml[METADATA] || {},
         dependencies: package_loaded_yml[DEPENDENCIES] || [],
         config: package_loaded_yml,
-        violations: PackageTodo.from(PackageTodo.yml(directory(package_name))).violations
+        violations: PackageTodo.from(PackageTodo.yml(directory(package_name))).violations,
+        original_key_order: original_keys
       )
     end
 
