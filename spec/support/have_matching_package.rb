@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_package_todo|
   match do |actual_packages|
     @actual_packages = actual_packages

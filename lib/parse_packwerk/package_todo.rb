@@ -1,4 +1,5 @@
 # typed: strict
+# frozen_string_literal: true
 
 module ParsePackwerk
   class PackageTodo < T::Struct

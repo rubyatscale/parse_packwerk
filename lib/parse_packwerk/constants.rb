@@ -1,18 +1,19 @@
 # typed: strict
+# frozen_string_literal: true
 
 module ParsePackwerk
-  ROOT_PACKAGE_NAME = T.let('.'.freeze, String)
-  PACKAGE_YML_NAME = T.let('package.yml'.freeze, String)
-  PACKWERK_YML_NAME = T.let('packwerk.yml'.freeze, String)
-  PACKAGE_TODO_YML_NAME = T.let('package_todo.yml'.freeze, String)
-  ENFORCE_DEPENDENCIES = T.let('enforce_dependencies'.freeze, String)
-  ENFORCE_PRIVACY = T.let('enforce_privacy'.freeze, String)
-  ENFORCE_LAYERS = T.let('enforce_layers'.freeze, String)
-  DEPENDENCY_VIOLATION_TYPE = T.let('dependency'.freeze, String)
-  PRIVACY_VIOLATION_TYPE = T.let('privacy'.freeze, String)
-  PUBLIC_PATH = T.let('public_path'.freeze, String)
-  METADATA = T.let('metadata'.freeze, String)
-  DEPENDENCIES = T.let('dependencies'.freeze, String)
+  ROOT_PACKAGE_NAME = T.let('.', String)
+  PACKAGE_YML_NAME = T.let('package.yml', String)
+  PACKWERK_YML_NAME = T.let('packwerk.yml', String)
+  PACKAGE_TODO_YML_NAME = T.let('package_todo.yml', String)
+  ENFORCE_DEPENDENCIES = T.let('enforce_dependencies', String)
+  ENFORCE_PRIVACY = T.let('enforce_privacy', String)
+  ENFORCE_LAYERS = T.let('enforce_layers', String)
+  DEPENDENCY_VIOLATION_TYPE = T.let('dependency', String)
+  PRIVACY_VIOLATION_TYPE = T.let('privacy', String)
+  PUBLIC_PATH = T.let('public_path', String)
+  METADATA = T.let('metadata', String)
+  DEPENDENCIES = T.let('dependencies', String)
 
   # Since this metadata is unstructured YAML, it could be any type. We leave it to clients of `ParsePackwerk::Package`
   # to add types based on their known usage of metadata.
