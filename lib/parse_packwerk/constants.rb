@@ -12,6 +12,7 @@ module ParsePackwerk
   DEPENDENCY_VIOLATION_TYPE = T.let('dependency', String)
   PRIVACY_VIOLATION_TYPE = T.let('privacy', String)
   PUBLIC_PATH = T.let('public_path', String)
+  OWNER = T.let('owner', String)
   METADATA = T.let('metadata', String)
   DEPENDENCIES = T.let('dependencies', String)
 

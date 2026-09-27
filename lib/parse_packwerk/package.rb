@@ -72,5 +72,29 @@ module ParsePackwerk
     def enforces_layers?
       enforce_layers
     end
+
+    # `owner` is read from `config` rather than stored as a prop, so edits through `config` and `with(owner:)` can't disagree.
+    # Only the top-level key is read. Unlike `CodeOwnership.for_package`, this doesn't fall back to `metadata.owner`.
+    sig { returns(T.nilable(String)) }
+    def owner
+      owner = config[OWNER]
+      owner if owner.is_a?(String)
+    end
+
+    sig { params(changed_props: T::Hash[Symbol, T.untyped]).returns(Package) }
+    def with(changed_props)
+      return super unless changed_props.key?(:owner)
+
+      changes = changed_props.dup
+      new_owner = T.let(changes.delete(:owner), T.nilable(String))
+      # Edit the copy `super` returns rather than passing `config:` to it, which would stringify every nested key in the file.
+      super(changes).tap do |package|
+        if new_owner.nil?
+          package.config.delete(OWNER)
+        else
+          package.config[OWNER] = new_owner
+        end
+      end
+    end
   end
 end

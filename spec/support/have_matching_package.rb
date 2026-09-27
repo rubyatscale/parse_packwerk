@@ -33,6 +33,7 @@ RSpec::Matchers.define(:have_matching_package) do |expected_package, expected_pa
       name: package.name,
       enforce_dependencies: package.enforce_dependencies,
       enforce_privacy: package.enforce_privacy,
+      owner: package.owner,
       metadata: package.metadata,
       dependencies: package.dependencies.sort,
       package_todo: if package_todo.nil?

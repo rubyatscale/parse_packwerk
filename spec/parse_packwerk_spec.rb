@@ -319,6 +319,60 @@ RSpec.describe ParsePackwerk do
       it { is_expected.to have_matching_package expected_domain_package, expected_package_todo }
     end
 
+    context 'in app that has a top-level owner' do
+      before do
+        write_file('packs/package1/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          enforce_privacy: true
+          owner: Mission > Team
+          metadata:
+            owner: Legacy Team
+        CONTENTS
+        write_file('packs/package2/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+        CONTENTS
+      end
+
+      it 'reads the top-level owner, separately from metadata' do
+        package = ParsePackwerk.find('packs/package1')
+
+        expect(package.owner).to eq 'Mission > Team'
+        expect(package.metadata).to eq('owner' => 'Legacy Team')
+      end
+
+      it 'is nil for a package without one' do
+        expect(ParsePackwerk.find('packs/package2').owner).to be_nil
+      end
+
+      it 'does not fall back to metadata.owner' do
+        write_file('packs/package2/package.yml', <<~CONTENTS)
+          enforce_dependencies: true
+          metadata:
+            owner: Legacy Team
+        CONTENTS
+
+        expect(ParsePackwerk.find('packs/package2').owner).to be_nil
+      end
+
+      context 'when the owner is not a string' do
+        before do
+          write_file('packs/package1/package.yml', <<~CONTENTS)
+            enforce_dependencies: true
+            owner: 123
+          CONTENTS
+        end
+
+        it 'still loads the package, with a nil owner, and writes the value back unchanged' do
+          package = ParsePackwerk.find('packs/package1')
+          expect(package.owner).to be_nil
+
+          ParsePackwerk.write_package_yml!(package)
+
+          expect(YAML.load_file('packs/package1/package.yml')['owner']).to eq 123
+        end
+      end
+    end
+
     context 'in app that has violations' do
       before do
         write_file('packs/package2/package_todo.yml', <<~CONTENTS)
@@ -983,7 +1037,7 @@ RSpec.describe ParsePackwerk do
     let(:package_yml) { package_dir.join('package.yml') }
     let(:package_todo_yml) { package_dir.join('package_todo.yml') }
 
-    def build_pack(public_path: 'app/public', enforce_privacy: true, enforce_layers: true, dependencies: [], metadata: {}, config: {})
+    def build_pack(public_path: 'app/public', enforce_privacy: true, enforce_layers: true, owner: nil, dependencies: [], metadata: {}, config: {})
       ParsePackwerk::Package.new(
         name: package_dir.to_s,
         enforce_dependencies: true,
@@ -992,7 +1046,7 @@ RSpec.describe ParsePackwerk do
         public_path: public_path,
         dependencies: dependencies,
         metadata: metadata,
-        config: config,
+        config: owner ? config.merge('owner' => owner) : config,
         violations: []
       )
     end
@@ -1003,6 +1057,7 @@ RSpec.describe ParsePackwerk do
         enforce_dependencies: package.enforce_dependencies,
         enforce_privacy: package.enforce_privacy,
         enforce_layers: package.enforce_layers,
+        owner: package.owner,
         dependencies: package.dependencies,
         metadata: package.metadata
       }
@@ -1159,6 +1214,118 @@ RSpec.describe ParsePackwerk do
       end
     end
 
+    context 'package with owner' do
+      let(:package) { build_pack(owner: 'Mission > Team', dependencies: ['packs/foo']) }
+
+      it 'writes owner as a top-level key' do
+        ParsePackwerk.write_package_yml!(package)
+
+        expect(package_yml.read).to eq <<~PACKAGEYML
+          enforce_dependencies: true
+          enforce_privacy: true
+          enforce_layers: true
+          owner: Mission > Team
+          dependencies:
+          - packs/foo
+        PACKAGEYML
+
+        expect(all_packages.count).to eq 1
+        expect(pack_as_hash(all_packages.first)).to eq pack_as_hash(package)
+      end
+
+      context 'overwriting an existing package file' do
+        before do
+          write_file(package_yml, <<~CONTENTS)
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            owner: Old Team
+            dependencies:
+            - packs/foo
+          CONTENTS
+        end
+
+        it 'allows you to change the owner' do
+          new_package = ParsePackwerk.find('packs/example_pack').with(owner: 'New Team')
+
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            owner: New Team
+            dependencies:
+            - packs/foo
+          PACKAGEYML
+        end
+
+        it 'writes the file back unchanged when the owner is untouched' do
+          original = package_yml.read
+
+          ParsePackwerk.write_package_yml!(ParsePackwerk.find('packs/example_pack'))
+
+          expect(package_yml.read).to eq original
+        end
+
+        it 'changes only the owner line when other config has non-string keys' do
+          write_file(package_yml, <<~CONTENTS)
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            owner: Old Team
+            dependencies:
+            - packs/foo
+            custom:
+              1: one
+              true: enabled
+          CONTENTS
+          original = package_yml.read
+
+          ParsePackwerk.write_package_yml!(ParsePackwerk.find('packs/example_pack').with(owner: 'New Team'))
+
+          expect(package_yml.read).to eq original.sub('owner: Old Team', 'owner: New Team')
+        end
+
+        it 'leaves the package it was called on unchanged' do
+          package = ParsePackwerk.find('packs/example_pack')
+
+          package.with(owner: 'New Team')
+
+          expect(package.owner).to eq 'Old Team'
+          expect(ParsePackwerk.find('packs/example_pack').owner).to eq 'Old Team'
+        end
+
+        it 'rejects an owner that is not a string' do
+          expect { ParsePackwerk.find('packs/example_pack').with(owner: 123) }.to raise_error(TypeError)
+        end
+
+        it 'allows you to remove the owner' do
+          new_package = ParsePackwerk.find('packs/example_pack').with(owner: nil)
+
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            dependencies:
+            - packs/foo
+          PACKAGEYML
+        end
+
+        it 'still honours an owner changed directly in config' do
+          package = ParsePackwerk.find('packs/example_pack')
+          package.config['owner'] = 'New Team'
+
+          ParsePackwerk.write_package_yml!(package)
+
+          expect(package.owner).to eq 'New Team'
+          expect(YAML.load_file(package_yml)['owner']).to eq 'New Team'
+        end
+      end
+    end
+
     context 'package with other top-level config' do
       let(:package) do
         build_pack(config: {
@@ -1277,6 +1444,22 @@ RSpec.describe ParsePackwerk do
             - packs/foo
             metadata:
               owner: Team A
+          PACKAGEYML
+        end
+
+        it 'appends a newly added owner as a new key' do
+          package = ParsePackwerk::Package.from(package_yml)
+          new_package = package.with(owner: 'Team A')
+          ParsePackwerk.write_package_yml!(new_package)
+
+          expect(package_yml.read).to eq <<~PACKAGEYML
+            enforce_privacy: true
+            enforce_layers: true
+            layer: admin
+            enforce_dependencies: true
+            dependencies:
+            - packs/foo
+            owner: Team A
           PACKAGEYML
         end
 
