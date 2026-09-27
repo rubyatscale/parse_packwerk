@@ -72,5 +72,27 @@ module ParsePackwerk
     def enforces_layers?
       enforce_layers
     end
+
+    # `owner` is read from `config` rather than stored as a prop, so edits through `config` and `with(owner:)` can't disagree.
+    sig { returns(T.nilable(String)) }
+    def owner
+      owner = config[OWNER]
+      owner if owner.is_a?(String)
+    end
+
+    sig { params(changed_props: T::Hash[Symbol, T.untyped]).returns(Package) }
+    def with(changed_props)
+      return super unless changed_props.key?(:owner)
+
+      changes = changed_props.dup
+      new_owner = changes.delete(:owner)
+      new_config = T.let(changes.fetch(:config, config), T::Hash[T.untyped, T.untyped]).dup
+      if new_owner.nil?
+        new_config.delete(OWNER)
+      else
+        new_config[OWNER] = new_owner
+      end
+      super(changes.merge(config: new_config))
+    end
   end
 end
