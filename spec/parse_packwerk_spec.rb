@@ -1268,6 +1268,38 @@ RSpec.describe ParsePackwerk do
           expect(package_yml.read).to eq original
         end
 
+        it 'changes only the owner line when other config has non-string keys' do
+          write_file(package_yml, <<~CONTENTS)
+            enforce_dependencies: true
+            enforce_privacy: true
+            enforce_layers: true
+            owner: Old Team
+            dependencies:
+            - packs/foo
+            custom:
+              1: one
+              true: enabled
+          CONTENTS
+          original = package_yml.read
+
+          ParsePackwerk.write_package_yml!(ParsePackwerk.find('packs/example_pack').with(owner: 'New Team'))
+
+          expect(package_yml.read).to eq original.sub('owner: Old Team', 'owner: New Team')
+        end
+
+        it 'leaves the package it was called on unchanged' do
+          package = ParsePackwerk.find('packs/example_pack')
+
+          package.with(owner: 'New Team')
+
+          expect(package.owner).to eq 'Old Team'
+          expect(ParsePackwerk.find('packs/example_pack').owner).to eq 'Old Team'
+        end
+
+        it 'rejects an owner that is not a string' do
+          expect { ParsePackwerk.find('packs/example_pack').with(owner: 123) }.to raise_error(TypeError)
+        end
+
         it 'allows you to remove the owner' do
           new_package = ParsePackwerk.find('packs/example_pack').with(owner: nil)
 
